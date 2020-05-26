@@ -26,12 +26,12 @@ books = [
 
 @app.route('/', methods=['GET'])
 def home():
-    return '''<h1>Distant Reading Archive</h1>
-<p>A prototype API for distant reading of science fiction novels.</p>'''
+    return '''<h1>Team A Server</h1>
+<p>Home page of Team A to parse log files. To test enter the path "/api/test"</p>'''
 
 
 # A route to return all of the available entries in our catalog.
-@app.route('/api/v1/resources/books/all', methods=['GET'])
+@app.route('/api/test', methods=['GET'])
 def api_all():
     return jsonify(books)
 

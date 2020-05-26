@@ -1,0 +1,6 @@
+Install colorama if console colors are preferred.
+{"levelname": "INFO", "asctime": "2020-03-17 12:12:06,353", "name": "controller.publisher", "filename": "publisher.py", "message": "Producing to topic 'ccx.ocp.results' on brokers ['platform-mq-ci-kafka-bootstrap.platform-mq-ci.svc:9092']"}
+{"levelname": "INFO", "asctime": "2020-03-17 12:12:06,356", "name": "controller.consumer", "filename": "consumer.py", "message": "Consuming topic 'platform.upload.buckit' from brokers ['platform-mq-ci-kafka-bootstrap.platform-mq-ci.svc:9092'] as group 'ccx_data_pipeline_app'"}
+{"levelname": "INFO", "asctime": "2020-03-17 12:12:06,653", "name": "controller.watchers.consumer_watcher", "filename": "consumer_watcher.py", "message": "ConsumerWatcher created and listening on port 8000"}
+{"levelname": "WARNING", "asctime": "2020-03-17 12:12:25,096", "name": "kafka.coordinator", "filename": "base.py", "message": "Heartbeat failed for group ccx_data_pipeline_app because it is rebalancing"}
+{"levelname": "WARNING", "asctime": "2020-03-17 12:12:43,583", "name": "kafka.coordinator", "filename": "base.py", "message": "Heartbeat failed for group ccx_data_pipeline_app because it is rebalancing"}

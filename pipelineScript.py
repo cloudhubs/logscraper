@@ -2,23 +2,17 @@ import json
 
 # Class to hold desired information about each log
 class LogItem:
-    orgId = -1
-    clusterName = ""
-    partition = -1
-    offset = -1
-    timestamp = ""
-    isError = False
-    isWarning = False
-    messages = []
+
     def _init_(self):
-        self.orgId = -1
-        self.clusterName = ''
-        self.partition = -1
-        self.offset = -1
-        self.timestamp = ""
-        self.isError = False
-        self.isWarning = False
-        self.messages = []
+        orgId = -1
+        clusterName = ""
+        partition = -1
+        offset = -1
+        timestamp = ""
+        isError = False
+        isWarning = False
+        messages = []
+
 
 # Verify if a line is in JSON format
 # @params myjson: the object to verify json form of
@@ -44,7 +38,7 @@ def get_log_list(pipeline_path):
 
 # Reads through logs and assembles an array of LogItem objects
 # @params pipeline_path: the path to the pipeline log
-# @return an array of LogItem objects
+# @return an array of LogItem objects as JSON objects
 def get_log_items(pipeline_path):
     logItems = []
     logs = get_log_list(pipeline_path)
@@ -89,11 +83,15 @@ def get_log_items(pipeline_path):
                 elif logs[i]['levelname'] == "WARNING":
                     isWarning = True
                 msgArr.append(logs[i]['message'])
-    return logItems
+    #Convert objects to json objects
+    json_logs = []
+    for i in range(len(logItems)):
+        json_logs.append(json.dumps(logItems[i].__dict__, indent = 4))
+    return json_logs
 
 
-logs = get_log_items(input())
-for i in range(len(logs)):
-    print(logs[i].orgId, logs[i].clusterName, logs[i].partition, logs[i].offset, "Is Error?", logs[i].isError, logs[i].timestamp)
-    print(logs[i].messages, "\n")
+# If you want to test with command line, input file name here
+#logs = get_log_items(input())
+#for i in range(len(logs)):
+#    print(logs[i])
         

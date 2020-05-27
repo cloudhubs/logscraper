@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.6"
+jobs:
+  include:
+    - stage: style
+      script:
+        - make style
+    - stage: unit tests
+      script:
+        - make test
+stages:
+  - style
+  - unit tests
+script:
+  - python --version

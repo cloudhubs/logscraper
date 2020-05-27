@@ -77,7 +77,7 @@ def get_logs():
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
             list.append(file)
-            results.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
         if fnmatch.fnmatch(file, 'pipeline*.log'):
             list.append(file)
             list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))

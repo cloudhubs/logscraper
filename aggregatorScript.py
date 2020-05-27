@@ -13,8 +13,6 @@ class ConsumedGrouping:
         self.cluster_id = None
         self.error = False  # flag set to true if an error occured in this group
 
-    def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 
 # @param file: path to the log file to decode and return
@@ -185,7 +183,7 @@ def get_groups_as_json(log_file):
     json_groups = []
     groups = get_groups(log_file)
     for group in groups:
-        json_groups.append(group.to_json())
+        json_groups.append(group.__dict__)
     return json_groups
 
 if __name__ == "__main__":

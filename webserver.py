@@ -1,4 +1,8 @@
 import flask
+import fnmatch
+import os
+import aggregator-group
+import pipelineScript
 from flask import request, jsonify
 
 app = flask.Flask(__name__)
@@ -40,7 +44,7 @@ def api_all():
 # This will call the pipeline function for all pipeline.log files found and will call the aggregate
 # function for all aggregate.log files found in the path and return results to the user
 @app.route('/logs/folder', methods=['POST'])
-def post_logs(path):
+def post_logs(pipeline_Path, aggregate_Path):
     #Search Path here
         #If pipeline.log call pipeline function written by Jackson
         #If aggregate.log call function written by Brooklynn. 
@@ -55,7 +59,11 @@ def post_logs(path):
 # from the logs file given to us by Red Hat
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
-    return jsonify(books)
-
+    dirpath='./logs'
+    for file in os.listdir(dirpath):
+        if fnmatch.fnmatch(file, 'aggregator*.log'):
+            
+        if fnmatch.fnmatch(file, 'pipeline*.log);
+            pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))
 
 app.run()

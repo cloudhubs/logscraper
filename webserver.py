@@ -35,35 +35,36 @@ def home():
 <p> To parse the example given by Red Hat use "/logs/default".</p>
 <p> To parse a folder use "/logs/folder" with the path to that folder as an argument.</p>'''
 
-# A route to return all of the available entries in our catalog.
+# A route to return all of the available entries in books object as an example
 @app.route('/api/test', methods=['GET'])
 def api_all():
     return jsonify(books)
 
-# A route to return JSON for log files in given path
-# This will call the pipeline function for all pipeline.log files found and will call the aggregate
-# function for all aggregate.log files found in the path and return results to the user
+# Functionality - Prints parsed JSON of aggregate logs and pipeline logs from Posted directories
+# Parameters 
+# pipeline_Path - Path to pipeline.log files
+# aggregate_Path - Path to aggregate.log file
+# Return - The call to scripts will print the parsed JSON
+
 @app.route('/logs/folder', methods=['POST'])
 def post_logs(pipeline_Path, aggregate_Path):
-    #Search Path here
-        #If pipeline.log call pipeline function written by Jackson
-        #If aggregate.log call function written by Brooklynn. 
-        #Append the result of these calls to the JSON object to return to the user
-    #Return error if unable to find or open path or files 
-    #return JSON Object
-    return jsonify(books)
+    for file in os.listdir(pipeline_Path)
+	pipelineScript.get_log_items((os.path.abspath(os.path.join(pipeline_Path, file)))
+    for file in os.listdir(aggregate_Path)
+        aggregator-group.get_log_list((os.path.abspath(os.path.join(aggregate_Path, file)))
 
 
-# A route to return JSON for default log files
-# This will call some combo of our pipeline and aggregate functions to return the proper json output
-# from the logs file given to us by Red Hat
+# Functionality - Will print the example log files given by Mr. Tišnovský from Red Hat
+# Parameters - None
+# Return - The call to scripts will print the parsed JSON
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
     dirpath='./logs'
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
-            
-        if fnmatch.fnmatch(file, 'pipeline*.log);
+	    aggregator-group.get_log_list((os.path.abspath(os.path.join(dirpath, file)))            
+        else if fnmatch.fnmatch(file, 'pipeline*.log);
             pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))
+    
 
 app.run()

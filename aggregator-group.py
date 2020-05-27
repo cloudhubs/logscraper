@@ -9,20 +9,15 @@ class ConsumedGrouping:
     def __init__(self):
         # messages is a list of list, in the format [level, timestamp, message]
         self.messages = []
-        self.timestamps = []  # parallel array with messages
         self.organization = None
         self.cluster_id = None
-        self.error = False
+        self.error = False  # flag set to true if an error occured in this group
 
 
-class URIGrouping:
-
-    def __init__(self):
-        self.messages = []
-        self.error = False
-
-
+# @param file: path to the log file to decode and return
+# @return value: list of decoded log records
 def get_log_list(file):
+    """Open a log file, decode the JSON, and export the log records"""
     log_list = [{}]
 
     with open(file, encoding='utf-8') as f:
@@ -35,7 +30,10 @@ def get_log_list(file):
     return log_list[1:]
 
 
+# @param logs: list of log records decoded from the JSON
+# @return value: list of a ConsumedGroupings, which contain the messages, timestamps, and other info for a group
 def group_consumed_logs(logs):
+    """Group logs based on the format of 'Consumed'"""
     groupings = []
     processing_group = False
     current_offset = 0
@@ -51,7 +49,7 @@ def group_consumed_logs(logs):
             processing_group = True
             current_offset = record['offset']
             current_group = ConsumedGrouping()
-            current_group.messages.append([record['level'], record['time'],record['message']])
+            current_group.messages.append([record['level'], record['time'], record['message']])
         elif not processing_group:
             # message not apart of a group, move on
             continue
@@ -62,18 +60,18 @@ def group_consumed_logs(logs):
                 if record['level'] == "info":
                     current_group.cluster_id = record['cluster']
                     current_group.organization = record['organization']
-                    current_group.messages.append([record['level'], record['time'],record['message']])
+                    current_group.messages.append([record['level'], record['time'], record['message']])
                 elif record['level'] == "error":
                     # add error
                     current_group.error = True
-                    current_group.messages.append([record['level'], record['time'],record['message']])
+                    current_group.messages.append([record['level'], record['time'], record['message']])
             elif 'offset' not in record and not record['message'].startswith("Request URI"):
                 if record['level'] == "error":
                     current_group.error = True
-                    current_group.messages.append([record['level'], record['time'],record['error']])
-                    current_group.messages.append([record['level'], record['time'],record['message']])
+                    current_group.messages.append([record['level'], record['time'], record['error']])
+                    current_group.messages.append([record['level'], record['time'], record['message']])
                 else:
-                    current_group.messages.append([record['level'], record['time'],record['message']])
+                    current_group.messages.append([record['level'], record['time'], record['message']])
             else:
                 # end of group
                 processing_group = False
@@ -92,7 +90,10 @@ def group_consumed_logs(logs):
     return groupings
 
 
+# @param logs: list of log records decoded from the JSON
+# @return value: list of a ConsumedGroupings, which contain the messages, timestamps, and other info for a group
 def group_consumed_offset_logs(logs):
+    """Group logs based on the format of 'Consumed Log Offset'"""
     groupings = []
     processing_group = False
     current_group = None
@@ -107,7 +108,7 @@ def group_consumed_offset_logs(logs):
             current_group = ConsumedGrouping()
             processing_group = True
             local_record_index = 1
-            current_group.messages.append([record['level'], record['time'],record['message']])
+            current_group.messages.append([record['level'], record['time'], record['message']])
         elif not processing_group:
             # record not apart of a group, move on
             continue
@@ -118,13 +119,13 @@ def group_consumed_offset_logs(logs):
                 message_details = record['message'].split(" ")
                 current_group.organization = message_details[3]
                 current_group.cluster_id = message_details[6]
-                current_group.messages.append([record['level'], record['time'],record['message']])
+                current_group.messages.append([record['level'], record['time'], record['message']])
                 local_record_index += 1
             elif local_record_index >= 1 and record['level'] == "error":
                 # add error to the grouping
                 current_group.error = True
-                current_group.messages.append([record['level'], record['time'],record['error']])
-                current_group.messages.append([record['level'], record['time'],record['message']])
+                current_group.messages.append([record['level'], record['time'], record['error']])
+                current_group.messages.append([record['level'], record['time'], record['message']])
                 local_record_index += 1
             else:
                 # either regular log or end of group
@@ -134,7 +135,7 @@ def group_consumed_offset_logs(logs):
                     if record['message'].startswith("Consumed"):
                         local_record_index = 1
                         current_group = ConsumedGrouping()
-                        current_group.messages.append([record['level'], record['time'],record['message']])
+                        current_group.messages.append([record['level'], record['time'], record['message']])
                     else:
                         current_group = None
                         processing_group = False
@@ -142,9 +143,9 @@ def group_consumed_offset_logs(logs):
                 else:
                     # regular message of group
                     if 'time' in record:
-                        current_group.messages.append([record['level'],record['time'],record['message']])
+                        current_group.messages.append([record['level'], record['time'], record['message']])
                     else:
-                        current_group.messages.append([record['level'],[],record['message']])
+                        current_group.messages.append([record['level'], [], record['message']])
                     local_record_index += 1
 
     # add last group to groupings
@@ -154,7 +155,10 @@ def group_consumed_offset_logs(logs):
     return groupings
 
 
-if __name__ == "__main__":
+# @return value: returns a list of 1-2 ConsumedGroups. One group is based on Consumed, and the other Consumed Offset
+def get_groups():
+    """Take an aggregator log file as input, produce groupings, and print/return"""
+
     if len(sys.argv) < 2:
         print("Error: Please provide a path to a file")
         sys.exit(1)
@@ -172,3 +176,9 @@ if __name__ == "__main__":
     for group_category in groups:
         for group in group_category:
             print(group.messages)
+
+    return groups
+
+
+if __name__ == "__main__":
+    get_groups()

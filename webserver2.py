@@ -2,10 +2,23 @@ import flask
 import fnmatch
 import os
 import aggregatorScript
+import pipelineScript
 from flask import request, jsonify
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+
+class LogItem:
+    orgId = -1
+    clusterName = ""
+    partition = -1
+    offset = -1
+    timestamp = ""
+    isError = False
+    isWarning = False
+    messages = []
+
 
 # Create some test data for our catalog in the form of a list of dictionaries.
 books = [
@@ -58,11 +71,10 @@ def get_logs():
     dirpath='./logs'
     results = []
     for file in os.listdir(dirpath):
-        if fnmatch.fnmatch(file, 'aggregator*.log'):
-            #results.append(aggregatorScript.get_log_list((os.path.abspath(os.path.join(dirpath, file)))))
-            #aggregatorScript.get_log_list((os.path.abspath(os.path.join(dirpath, file))))
-            results.append(file)
-            results.append(os.path.abspath(os.path.join(dirpath, file)))
+        #if fnmatch.fnmatch(file, 'aggregator*.log'):
+            #results.append(aggregatorScript.get_groups((os.path.abspath(os.path.join(dirpath, file)))))
+        if fnmatch.fnmatch(file, 'pipeline*.log'):
+            results.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
     return jsonify(results)
 
 app.run()

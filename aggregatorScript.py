@@ -156,14 +156,9 @@ def group_consumed_offset_logs(logs):
 
 
 # @return value: returns a list of 1-2 ConsumedGroups. One group is based on Consumed, and the other Consumed Offset
-def get_groups():
+def get_groups(log_file):
     """Take an aggregator log file as input, produce groupings, and print/return"""
 
-    if len(sys.argv) < 2:
-        print("Error: Please provide a path to a file")
-        sys.exit(1)
-
-    log_file = sys.argv[1]
     logs = get_log_list(log_file)
 
     # get log groupings for the two types

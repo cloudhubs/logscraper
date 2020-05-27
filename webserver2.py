@@ -1,9 +1,10 @@
 import flask
 import fnmatch
+import json
 import os
 import aggregatorScript
 import pipelineScript
-from flask import request, jsonify
+from flask import Response, jsonify
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -69,12 +70,13 @@ def post_logs(aggregate_Path):
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
     dirpath='./logs'
-    results = []
+    list = []
     for file in os.listdir(dirpath):
         #if fnmatch.fnmatch(file, 'aggregator*.log'):
             #results.append(aggregatorScript.get_groups((os.path.abspath(os.path.join(dirpath, file)))))
         if fnmatch.fnmatch(file, 'pipeline*.log'):
-            results.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
-    return jsonify(results)
+            list.append(file)
+            list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+    return jsonify(list)
 
 app.run()

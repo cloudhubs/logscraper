@@ -1,3 +1,5 @@
+import json
+
 import flask
 import fnmatch
 import os
@@ -39,6 +41,7 @@ books = [
      'published': '1975'}
 ]
 
+
 @app.route('/', methods=['GET'])
 def home():
     return '''<h1><center>Team A Server</center></h1>
@@ -47,10 +50,12 @@ def home():
 <p> To parse the example given by Red Hat use "/logs/default".</p>
 <p> To parse a folder use "/logs/folder" with the path to that folder as an argument.</p>'''
 
+
 # A route to return all of the available entries in books object as an example
 @app.route('/api/test', methods=['GET'])
 def api_all():
     return jsonify(books)
+
 
 # Functionality - Prints parsed JSON of aggregate logs and pipeline logs from Posted directories
 # Parameters 
@@ -60,7 +65,7 @@ def api_all():
 @app.route('/logs/folder', methods=['POST'])
 def post_logs(aggregate_Path):
     for file in os.listdir(aggregate_Path):
-        aggregator-group.get_log_list((os.path.abspath(os.path.join(aggregate_Path, file))))
+        aggregatorScript.get_log_list((os.path.abspath(os.path.join(aggregate_Path, file))))
 
 
 # Functionality - Will print the example log files given by Mr. Tišnovský from Red Hat
@@ -68,13 +73,15 @@ def post_logs(aggregate_Path):
 # Return - The call to scripts will print the parsed JSON
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
-    dirpath='./logs'
+    dirpath = './logs'
     results = []
     for file in os.listdir(dirpath):
-        #if fnmatch.fnmatch(file, 'aggregator*.log'):
-            #results.append(aggregatorScript.get_groups((os.path.abspath(os.path.join(dirpath, file)))))
+        if fnmatch.fnmatch(file, 'aggregator*.log'):
+            results.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
         if fnmatch.fnmatch(file, 'pipeline*.log'):
             results.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+
     return jsonify(results)
+
 
 app.run()

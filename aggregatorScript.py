@@ -13,6 +13,9 @@ class ConsumedGrouping:
         self.cluster_id = None
         self.error = False  # flag set to true if an error occured in this group
 
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
 
 # @param file: path to the log file to decode and return
 # @return value: list of decoded log records
@@ -155,7 +158,8 @@ def group_consumed_offset_logs(logs):
     return groupings
 
 
-# @return value: returns a list of 1-2 ConsumedGroups. One group is based on Consumed, and the other Consumed Offset
+# @param log_file: pass the path to the log file to parse
+# @return value: returns a list of ConsumedGroups. One group is based on Consumed, and the other Consumed Offset
 def get_groups(log_file):
     """Take an aggregator log file as input, produce groupings, and print/return"""
 
@@ -172,8 +176,21 @@ def get_groups(log_file):
         for group in group_category:
             print(group.messages)
 
-    return groups
+    return groups[0]
 
+
+# @param log_file: pass the path to the log file to parse
+# @return value: returns a list of ConsumedGroups in json format
+def get_groups_as_json(log_file):
+    json_groups = []
+    groups = get_groups(log_file)
+    for group in groups:
+        json_groups.append(group.to_json())
+    return json_groups
 
 if __name__ == "__main__":
-    get_groups()
+    if len(sys.argv) < 2:
+        print("Error: Please provide a path to a file")
+        sys.exit(1)
+    groups = get_groups(sys.argv[1])
+    print(groups[0].to_json())

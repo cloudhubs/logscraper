@@ -10,15 +10,6 @@ class LogItem:
     isError = False
     isWarning = False
     messages = []
-    def _init_(self):
-        self.orgId = -1
-        self.clusterName = ''
-        self.partition = -1
-        self.offset = -1
-        self.timestamp = ""
-        self.isError = False
-        self.isWarning = False
-        self.messages = []
 
 # Verify if a line is in JSON format
 # @params myjson: the object to verify json form of

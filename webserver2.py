@@ -2,7 +2,6 @@ import flask
 import fnmatch
 import os
 import aggregatorScript
-import pipelineScript
 from flask import request, jsonify
 
 app = flask.Flask(__name__)
@@ -46,9 +45,7 @@ def api_all():
 # aggregate_Path - Path to aggregate.log file
 # Return - The call to scripts will print the parsed JSON
 @app.route('/logs/folder', methods=['POST'])
-def post_logs(pipeline_Path, aggregate_Path):
-    for file in os.listdir(pipeline_Path):
-	    pipelineScript.get_log_items((os.path.abspath(os.path.join(pipeline_Path, file))))
+def post_logs(aggregate_Path):
     for file in os.listdir(aggregate_Path):
         aggregator-group.get_log_list((os.path.abspath(os.path.join(aggregate_Path, file))))
 
@@ -59,11 +56,13 @@ def post_logs(pipeline_Path, aggregate_Path):
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
     dirpath='./logs'
+    results = []
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
-            aggregatorScript.get_log_list((os.path.abspath(os.path.join(dirpath, file))))
-        if fnmatch.fnmatch(file, 'pipeline*.log'):
-            pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file))))
-
+            #results.append(aggregatorScript.get_log_list((os.path.abspath(os.path.join(dirpath, file)))))
+            #aggregatorScript.get_log_list((os.path.abspath(os.path.join(dirpath, file))))
+            results.append(file)
+            results.append(os.path.abspath(os.path.join(dirpath, file)))
+    return jsonify(results)
 
 app.run()

@@ -92,7 +92,7 @@ def get_log_items(pipeline_path):
     return logItems
 
 
-logs = get_log_items("logs/pipeline.log")
+logs = get_log_items(input())
 for i in range(len(logs)):
     print(logs[i].orgId, logs[i].clusterName, logs[i].partition, logs[i].offset, "Is Error?", logs[i].isError, logs[i].timestamp)
     print(logs[i].messages, "\n")

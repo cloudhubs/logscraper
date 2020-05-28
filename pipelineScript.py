@@ -3,6 +3,7 @@ import json
 
 # Class to hold desired information about each log
 class LogItem:
+<<<<<<< HEAD
     orgId = ""
     clusterName = []
     partition = ""
@@ -20,6 +21,19 @@ class LogItem:
         self.error = False
         self.warning = False
         self.messages = []
+=======
+
+    def _init_(self):
+        orgId = -1
+        clusterName = ""
+        partition = -1
+        offset = -1
+        timestamp = ""
+        error = False
+        warning = False
+        messages = []
+
+>>>>>>> origin/poc1
 
 
 # Verify if a line is in JSON format
@@ -55,8 +69,13 @@ def get_log_items(pipeline_path):
     isError = False
     isWarning = False
     msgArr = []
+<<<<<<< HEAD
     partition = ""
     offset = ""
+=======
+    partition = -1
+    offset = -1
+>>>>>>> origin/poc1
     info_message = ""
     # Loop through each line of the logs and grab desired information
     for i in range(len(logs)):
@@ -72,7 +91,11 @@ def get_log_items(pipeline_path):
                         if "OrgId" in message[h]:
                             item.orgId = message[h][message[h].find("=") + 1:]
                         elif "ClusterName" in message[h]:
+<<<<<<< HEAD
                             item.clusterName.append(message[h][message[h].find("=") + 2:-1])
+=======
+                            item.clusterName = message[h][message[h].find("=") + 2:-1]
+>>>>>>> origin/poc1
 
                 # check for partition and offset
                 if "Partition" in msgArr[0] or "Offset" in msgArr[0]:
@@ -96,8 +119,13 @@ def get_log_items(pipeline_path):
                 del item
                 isError = False
                 isWarning = False
+<<<<<<< HEAD
                 partition = ""
                 offset = ""
+=======
+                partition = -1
+                offset = -1
+>>>>>>> origin/poc1
             del msgArr[:]
         else:
             if "ERROR" in logs[i]['levelname']:
@@ -143,6 +171,7 @@ def get_log_items(pipeline_path):
         offset = -1
 
     # Convert objects to json objects
+<<<<<<< HEAD
     #json_logs = []
     #for i in range(len(logItems)):
      #   json_logs.append(logItems[i].__dict__)
@@ -183,3 +212,15 @@ logs = get_chunks("logs/pipeline.log")
 
 for i in range(len(logs)):
      print(logs[i]['offset'], logs[i]['messages'])
+=======
+    json_logs = []
+    for i in range(len(logItems)):
+        json_logs.append(logItems[i].__dict__)
+    return json_logs
+
+
+# If you want to test with command line, input file name here
+# logs = get_log_items("logs/pipeline.log")
+# for i in range(len(logs)):
+#     print(logs[i])
+>>>>>>> origin/poc1

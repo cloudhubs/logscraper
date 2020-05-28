@@ -4,8 +4,9 @@
 
 ```bash
 git clone https://github.com/cloudhubs/logscraper.git
-git fetch
+cd logscraper
 git checkout poc1
+git fetch
 ```
 
 ## Setup

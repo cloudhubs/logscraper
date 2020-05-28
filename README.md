@@ -1,5 +1,12 @@
 # LogScraper
 
+## Git
+
+```bash
+git clone https://github.com/cloudhubs/logscraper.git
+git fetch
+git checkout poc1
+```
 
 ## Setup
 

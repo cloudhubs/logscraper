@@ -176,8 +176,8 @@ def get_groups(log_file):
     return groups
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Error: Please provide a path to a file")
-        sys.exit(1)
-    get_groups(sys.argv[1])
+# if __name__ == "__main__":
+#     if len(sys.argv) < 2:
+#         print("Error: Please provide a path to a file")
+#         sys.exit(1)
+#     get_groups(sys.argv[1])

@@ -1,12 +1,21 @@
 import aggregatorscript
 
 
+class SearchResult:
+    def __init__(self):
+        self.timestamp = None
+        self.status = None
+        self.description = []
+
+
 # @param path_to_log: log file to read the logs from
 # @param offset: the offset to search by
 # @return value: list of ConsumedGroups found in log file that match the given offset
 def search_by_offset(path_to_log, offset):
     groups = aggregatorscript.get_groups(path_to_log)
-    return [group for group in groups if group.offset == offset]
+    matches = [group for group in groups if group.offset == offset]
+
+    return get_search_objects(matches)
 
 
 # @param path_to_log: log file to read the logs from
@@ -16,14 +25,32 @@ def search_by_offset(path_to_log, offset):
 def search_by_org_cluster(path_to_log, organization, cluster_id):
     groups = aggregatorscript.get_groups(path_to_log)
     cluster_matches = [group for group in groups if group.cluster_id == cluster_id]
-    return [matches for matches in cluster_matches if matches.organization == organization]
+    matches = [matches for matches in cluster_matches if matches.organization == organization]
+
+    return get_search_objects(matches)
+
+
+# @param matches: list of matches from the other search methods
+# @return value: returns the matches in SearchResult format
+def get_search_objects(matches: list):
+    # create a search result Object for each match
+    search_results = []
+    for match in matches:
+        new_result = SearchResult()
+        new_result.timestamp = match.messages[1]  # location of timestamp in ConsumedGrouping
+        new_result.description = [[message[0], message[2]] for message in match.messages]
+
+        # status = found if there's no error, status = error if there's an error
+        new_result.status = "found" if 'error' not in (message[0] for message in match.messages) else "error"
+        search_results.append(new_result)
+    return search_results
 
 
 if __name__ == "__main__":
-    results = search_by_offset("logs/aggregator.log", 1055)
+    results = search_by_offset("logs/aggregator.log", 1056)
     for result in results:
-        print(result.offset)
+        print(result.status)
 
-    results = search_by_org_cluster("logs/aggregator.log", 11789772, "92c04d4a-9f4c-441d-9df9-1e50c426df11")
+    results = search_by_org_cluster("logs/aggregator.log", 12769894, "11de562e-76f6-477d-92a6-817a1b256bee")
     for result in results:
-        print(result.cluster_id)
+        print(result.status)

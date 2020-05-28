@@ -1,10 +1,9 @@
-import json
 import flask
 import fnmatch
 import os
 import aggregatorscript
 import pipelinescript
-from flask import Response, jsonify
+from flask import jsonify
 from flask import request
 
 app = flask.Flask(__name__)
@@ -40,10 +39,10 @@ def get_logs():
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
             list.append(file)
-            list.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
         if fnmatch.fnmatch(file, 'pipeline*.log'):
             list.append(file)
-            list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
     return jsonify(list)
 
 
@@ -59,11 +58,11 @@ def search_by_clusterid_orgid():
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
             list.append(file)
-            list.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
 
         if fnmatch.fnmatch(file, 'pipeline*.log'):
             list.append(file)
-            list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
 
     return jsonify(list)
 
@@ -80,10 +79,10 @@ def search_by_offset():
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
             list.append(file)
-            list.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
         if fnmatch.fnmatch(file, 'pipeline*.log'):
             list.append(file)
-            list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
 
     return jsonify(list)
 

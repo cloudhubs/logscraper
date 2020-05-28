@@ -137,7 +137,7 @@ def get_log_items(pipeline_path):
     #Convert objects to json objects
     json_logs = []
     for i in range(len(logItems)):
-        json_logs.append(json.dumps(logItems[i].__dict__, indent = 4))
+        json_logs.append(logItems[i].__dict__)
     return json_logs
 
 

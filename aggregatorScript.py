@@ -186,9 +186,9 @@ def get_groups_as_json(log_file):
         json_groups.append(group.__dict__)
     return json_groups
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Error: Please provide a path to a file")
-        sys.exit(1)
-    groups = get_groups(sys.argv[1])
-    print(groups[0].to_json())
+# if __name__ == "__main__":
+#     if len(sys.argv) < 2:
+#         print("Error: Please provide a path to a file")
+#         sys.exit(1)
+#     groups = get_groups(sys.argv[1])
+#     print(groups[0].to_json())

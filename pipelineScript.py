@@ -197,4 +197,4 @@ logs = get_chunks("logs/pipeline.log")
 for i in range(len(logs)):
     print(logs[i].offset, logs[i].messages)
     print(logs[i].clusterName)
-   """ 
+   """

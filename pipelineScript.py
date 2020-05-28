@@ -143,6 +143,6 @@ def get_log_items(pipeline_path):
 
 
 # If you want to test with command line, input file name here
-logs = get_log_items("logs/pipeline.log")
-for i in range(len(logs)):
-    print(logs[i])
+# logs = get_log_items("logs/pipeline.log")
+# for i in range(len(logs)):
+#     print(logs[i])

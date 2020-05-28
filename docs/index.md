@@ -1,4 +1,4 @@
-# logscraper by Team A
+# Logscraper 
 
 Webserver for log processing
 

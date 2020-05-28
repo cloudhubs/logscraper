@@ -11,8 +11,8 @@ class ConsumedGrouping:
         self.messages = []
         self.organization = None
         self.cluster_id = None
+        self.offset = None
         self.error = False  # flag set to true if an error occured in this group
-
 
 
 # @param file: path to the log file to decode and return
@@ -50,6 +50,7 @@ def group_consumed_logs(logs):
             processing_group = True
             current_offset = record['offset']
             current_group = ConsumedGrouping()
+            current_group.offset = current_offset
             current_group.messages.append([record['level'], record['time'], record['message']])
         elif not processing_group:
             # message not apart of a group, move on
@@ -82,6 +83,7 @@ def group_consumed_logs(logs):
                     # new group
                     current_offset = record['offset']
                     current_group = ConsumedGrouping()
+                    current_group.offset = current_offset
                     processing_group = True
 
     # add last group to groupings
@@ -106,7 +108,9 @@ def group_consumed_offset_logs(logs):
             raise Exception("Error: log with no message")
 
         if not processing_group and record['message'].startswith("Consumed message offset"):
+            offset = record['message'].split(" ")[3]
             current_group = ConsumedGrouping()
+            current_group.current_offset = offset
             processing_group = True
             local_record_index = 1
             current_group.messages.append([record['level'], record['time'], record['message']])
@@ -134,8 +138,10 @@ def group_consumed_offset_logs(logs):
                     # end of group
                     groupings.append(current_group)
                     if record['message'].startswith("Consumed"):
+                        offset = record['message'].split(" ")[3]
                         local_record_index = 1
                         current_group = ConsumedGrouping()
+                        current_group.offset = offset
                         current_group.messages.append([record['level'], record['time'], record['message']])
                     else:
                         current_group = None
@@ -170,10 +176,6 @@ def get_groups(log_file):
         if len(group_category) == 0:
             groups.remove(group_category)
 
-    for group_category in groups:
-        for group in group_category:
-            print(group.messages)
-
     return groups[0]
 
 
@@ -186,9 +188,9 @@ def get_groups_as_json(log_file):
         json_groups.append(group.__dict__)
     return json_groups
 
-# if __name__ == "__main__":
-#     if len(sys.argv) < 2:
-#         print("Error: Please provide a path to a file")
-#         sys.exit(1)
-#     groups = get_groups(sys.argv[1])
-#     print(groups[0].to_json())
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Error: Please provide a path to a file")
+        sys.exit(1)
+    groups = get_groups(sys.argv[1])

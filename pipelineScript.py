@@ -191,11 +191,3 @@ def get_chunks(path):
         json_logs.append(chunks[h].__dict__)
     return json_logs
 
-"""
-# If you want to test with command line, input file name here
-logs = get_chunks("logs/pipeline.log")
-
-for i in range(len(logs)):
-    print(logs[i].offset, logs[i].messages)
-    print(logs[i].clusterName)
-"""

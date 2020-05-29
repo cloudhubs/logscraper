@@ -1,5 +1,6 @@
 import itertools
 import json
+import os
 import sys
 from json import JSONDecodeError
 
@@ -20,6 +21,10 @@ class ConsumedGrouping:
 def get_log_list(file):
     """Open a log file, decode the JSON, and export the log records"""
     log_list = [{}]
+
+    if not os.path.exists(file) or not os.path.isfile(file):
+        e = Exception("Could not open file")
+        raise e
 
     with open(file, encoding='utf-8') as f:
         for line in itertools.islice(f, 10, None):
@@ -193,4 +198,9 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Error: Please provide a path to a file")
         sys.exit(1)
-    groups = get_groups(sys.argv[1])
+
+    try:
+        groups = get_groups(sys.argv[1])
+    except Exception as e:
+        print(e)
+

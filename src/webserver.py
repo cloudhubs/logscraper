@@ -34,49 +34,82 @@ def home():
 def get_logs():
 
     dirpath = request.args.get('path', default='./logs', type=str)
-
+    logCount = 0
     print(dirpath)
     list = []
-    for file in os.listdir(dirpath):
-        if fnmatch.fnmatch(file, 'aggregator*.log'):
-            list.append(file)
-            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
-        if fnmatch.fnmatch(file, 'pipeline*.log'):
-            list.append(file)
-            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
-    return jsonify(list)
+    if os.path.exists(dirpath):
+        for file in os.listdir(dirpath):
+            if fnmatch.fnmatch(file, 'aggregator*.log'):
+                list.append(file)
+                list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+                logCount += 1
+            if fnmatch.fnmatch(file, 'pipeline*.log'):
+                list.append(file)
+                list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+                logCount += 1
+    else:
+        abort(404)
+
+    # If logCount ends up being 0, then that means there was no valid log files given
+    # and therefore wrong path to logs are provided
+    if(logCount == 0):
+        abort(404)
+    else:
+        return jsonify(list)
 
 # Functionality - Return the status of results for given cluster and org id's
 # Parameters
-# filepath: path to a file to look through
+# dirpath: path to a directory of logs
 # cluster: The given cluster id to search for
 # org: The given org id to search for
 # Return - The call to scripts will print the JSON status and result
 @app.route('/logs/clusterorgstatus', methods=['GET'])
 def search_by_clusterid_orgid():
 
-    filepath = request.args.get('path', default='*', type=str)
+    dirpath = request.args.get('path', default='*', type=str)
     cluster = request.args.get('cluster_id', default='*', type=str)
     org = request.args.get('org_id', default='*', type=str)
-
+    logCount = 0
     list = []
-    list = search_by_cluster(filepath, cluster, org)
+    if os.path.exists(dirpath):
+        for file in os.listdir(dirpath):
+            if fnmatch.fnmatch(file, 'aggregator*.log'):
+                logCount += 1
+            if fnmatch.fnmatch(file, 'pipeline*.log'):
+                logCount += 1
+        if (logCount == 0):
+            abort(404)
+        else:
+            list = search_by_cluster(dirpath, org, cluster)
+    else:
+        abort(404)
 
     return jsonify(list)
 
 
 # Functionality - Return the status of results for given offset
 # Parameters
-# filepath: path to a file to look through
+# dirpath: path to a directory of logs
 # offset: The given offset to search for
 # Return - The call to scripts will print the JSON status and result
 @app.route('/logs/offsetStatus', methods=['GET'])
 def search_by_offset():
-    filepath = request.args.get('path', default='*', type=str)
+    dirpath = request.args.get('path', default='*', type=str)
     offset = request.args.get('offset', default='*', type=str)
     list = []
 
-    list = offsetanalysis.search_by_offset(filepath, offset)
+    if os.path.exists(dirpath):
+        for file in os.listdir(dirpath):
+            if fnmatch.fnmatch(file, 'aggregator*.log'):
+                logCount += 1
+            if fnmatch.fnmatch(file, 'pipeline*.log'):
+                logCount += 1
+        if (logCount == 0):
+            abort(404)
+        else:
+            list = search_by_cluster(dirpath, offset)
+    else:
+        abort(404)
     return jsonify(list)
 
 app.run()

@@ -19,15 +19,15 @@ def search_by_offset(log_dir, offset):
     results = []
     for file in os.listdir(log_dir):
         full_path = os.path.join(log_dir, file)
-        if fnmatch.fnmatch(full_path, 'aggregator*.log'):
+        if fnmatch.fnmatch(full_path, '*/aggregator*.log'):
             aggregator_logs.extend(get_results_by_offset(full_path, offset, False))
-        elif fnmatch.fnmatch(full_path, 'pipeline*.log'):
+        elif fnmatch.fnmatch(full_path, '*/pipeline*.log'):
             pipeline_logs.extend(get_results_by_offset(full_path, offset, True))
 
     for pipe_log in pipeline_logs:
         match_flag = False
         for agg_log in aggregator_logs:
-            if pipe_log.offset == agg_log.offset and pipe_log == offset:
+            if int(pipe_log.offset) == int(agg_log.offset) and int(pipe_log.offset) == offset:
                 match_flag = True
                 new_result = OffsetSearchResult()
                 new_result.offset = pipe_log.offset
@@ -59,7 +59,7 @@ def get_results_by_offset(path_to_log, offset, pipeline=True):
     else:
         groups = aggregatorscript.get_groups(path_to_log)
 
-    matches = [group for group in groups if group.offset == offset]
+    matches = [group for group in groups if group.offset is not None and int(group.offset) == offset]
     return matches
 
 
@@ -83,4 +83,4 @@ def get_offset_search_objects(matches: list):
 if __name__ == "__main__":
 
     test_results = search_by_offset("../logs/", 28)
-    print(test_results)
+    print(test_results[0].consumed)

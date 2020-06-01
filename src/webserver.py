@@ -1,10 +1,7 @@
 import flask
 import fnmatch
 import os
-import aggregatorscript
-import pipelinescript
-import offsetanalysis
-import clusteranalysis
+from src import aggregatorscript, pipelinescript, offsetanalysis, clusteranalysis
 from flask import Response, jsonify
 from flask import request
 

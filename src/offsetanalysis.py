@@ -1,44 +1,78 @@
-import aggregatorscript, pipelinescript
+import fnmatch
+import os
+from src import aggregatorscript, pipelinescript
+
 
 class SearchResult:
     def __init__(self):
-        self.timestamp = None
-        self.status = None
-        self.description = []
+        self.offset = None
+        self.consumedTime = None
+        self.sentTime = None
+        self.consumed = False  # True if it was consumed, false if failed
+        self.pipelineMessages = []
+        self.aggregatorMessages = []
+
+
+def search_by_offset(log_dir, offset):
+    aggregator_logs = []
+    pipeline_logs = []
+    results = []
+    for file in os.listdir(log_dir):
+        full_path = os.path.join(log_dir, file)
+        if fnmatch.fnmatch(full_path, '*/aggregator*.log'):
+            aggregator_logs.extend(get_results_by_offset(full_path, offset, False))
+        elif fnmatch.fnmatch(full_path, '*/pipeline*.log'):
+            pipeline_logs.extend(get_results_by_offset(full_path, offset, True))
+
+    for pipe_log in pipeline_logs:
+        match_flag = False
+        for agg_log in aggregator_logs:
+            if int(pipe_log.offset) == int(agg_log.offset) and int(pipe_log.offset) == offset:
+                match_flag = True
+                new_result = SearchResult()
+                new_result.offset = pipe_log.offset
+                new_result.consumeTime = agg_log.timestamp
+                new_result.sentTime = pipe_log.timestamp
+                new_result.consumed = False if agg_log.error else True
+                new_result.aggregatorMessages = agg_log.messages
+                new_result.pipelineMessages = pipe_log.messages
+                results.append(new_result)
+                break
+
+        if not match_flag:
+            new_result = SearchResult
+            new_result.offset = pipe_log.offset
+            new_result.sentTime = pipe_log.timestamp
+            new_result.pipelineMessages = pipe_log.messages
+            new_result.consumed = False
+            results.append(new_result)
+
+    return results
+
 
 # @param path_to_log: log file to read the logs from
 # @param offset: the offset to search by
 # @return value: list of ConsumedGroups found in log file that match the given offset
-def search_by_offset(cls, path_to_log, offset):
-    groups = aggregatorscript.get_groups(path_to_log)
-    groups.extend(pipelinescript.get_log_items(path_to_log))
-    matches = [group for group in groups if group.offset == offset]
+def get_results_by_offset(path_to_log, offset, pipeline=True):
+    if pipeline:
+        groups = pipelinescript.get_log_items(path_to_log)
+    else:
+        groups = aggregatorscript.get_groups(path_to_log)
 
-    return get_search_objects(matches)
-
-
-# @param path_to_log: log file to read the logs from
-# @param organization: the organization id to search by
-# @param cluster_id: the id of the cluster to search by
-# @return value: list of ConsumedGroups found in log file that match the given organization and cluster_id
-def search_by_org_cluster(cls, path_to_log, organization, cluster_id):
-    groups = aggregatorscript.get_groups(path_to_log)
-    groups.extend(pipelinescript.get_log_items(path_to_log))
-    cluster_matches = [group for group in groups if group.cluster_id == cluster_id]
-    matches = [matches for matches in cluster_matches if matches.organization == organization]
-
-    return get_search_objects(matches)
+    matches = [group for group in groups if group.offset is not None and int(group.offset) == offset]
+    return matches
 
 
 # @param matches: list of matches from the other search methods
 # @return value: returns the matches in SearchResult format
-def get_search_objects(matches: list):
+def get_offset_search_objects(matches: list):
     # create a search result Object for each match
     search_results = []
     for match in matches:
         new_result = SearchResult()
         new_result.timestamp = match.timestamp  # location of timestamp in ConsumedGrouping
         new_result.description = [[message[0], message[1]] for message in match.messages]
+        new_result.offset = match.offset
 
         # status = found if there's no error, status = error if there's an error
         new_result.status = "found" if 'error' not in (message[0] for message in match.messages) else "error"
@@ -46,13 +80,7 @@ def get_search_objects(matches: list):
     return search_results
 
 
-
-
 if __name__ == "__main__":
-    results = search_by_offset("logs/aggregator.log", 1056)
-    for result in results:
-        print(result.status)
 
-    results = search_by_org_cluster("logs/aggregator.log", 12769894, "11de562e-76f6-477d-92a6-817a1b256bee")
-    for result in results:
-        print(result.status)
+    test_results = search_by_offset("../logs/", 28)
+    print(test_results[0])

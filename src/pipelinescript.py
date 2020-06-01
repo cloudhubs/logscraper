@@ -56,8 +56,8 @@ def get_log_items(pipeline_path):
     is_error = False
     is_warning = False
     msg_arr = []
-    partition = ""
-    offset = ""
+    partition = -1
+    offset = -1
     # Loop through each line of the logs and grab desired information
     for i in range(len(logs)):
         # Beginning of a chunk of data, so save its message
@@ -70,7 +70,7 @@ def get_log_items(pipeline_path):
                     message = logs[i - 1]['message'].split(',')
                     for h in range(len(message)):
                         if "OrgId" in message[h]:
-                            item.organization = message[h][message[h].find("=") + 1:]
+                            item.organization = int(message[h][message[h].find("=") + 1:])
                         elif "ClusterName" in message[h]:
                             item.cluster_id = message[h][message[h].find("=") + 2:-1]
 
@@ -79,7 +79,7 @@ def get_log_items(pipeline_path):
                     message = msg_arr[0].split(';')
                     for k in range(len(message)):
                         if "Partition" in message[k]:
-                            partition = message[k][12:]
+                            partition = int(message[k][12:])
                         elif "Offset" in message[k]:
                             offset = message[k][9:]
                 item.partition = partition
@@ -96,8 +96,8 @@ def get_log_items(pipeline_path):
                 del item
                 is_error = False
                 is_warning = False
-                partition = ""
-                offset = ""
+                partition = -1
+                offset = -1
             del msg_arr[:]
         else:
             if "ERROR" in logs[i]['levelname']:
@@ -114,7 +114,7 @@ def get_log_items(pipeline_path):
             message = logs[len(logs) - 1]['message'].split(',')
             for h in range(len(message)):
                 if "OrgId" in message[i]:
-                    item.organization = message[h][message[h].find("=") + 1:]
+                    item.organization = int(message[h][message[h].find("=") + 1:])
                 elif "ClusterName" in message[h]:
                     item.cluster_id = message[h][message[h].find("=") + 2:-1]
         # check for partition and offset
@@ -123,7 +123,7 @@ def get_log_items(pipeline_path):
             print(message)
             for j in range(len(message)):
                 if "Partition" in message[j]:
-                    item.partition = message[j][11:]
+                    item.partition = int(message[j][11:])
                 elif "Offset" in message[i]:
                     item.offset = message[j][9:]
 
@@ -137,10 +137,6 @@ def get_log_items(pipeline_path):
         logItems.append(item)
         del msg_arr[:]
         del item
-        is_error = False
-        is_warning = False
-        partition = -1
-        offset = -1
     return logItems
 
 

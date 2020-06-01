@@ -23,15 +23,15 @@ def get_log_list(file):
     log_list = [{}]
 
     if not os.path.exists(file) or not os.path.isfile(file):
-        e = Exception("Could not open file")
-        raise e
+        err = Exception("Could not open file")
+        raise err
 
     with open(file, encoding='utf-8') as f:
         for line in itertools.islice(f, 10, None):
             try:
                 log_list.append(json.loads(line))
-            except JSONDecodeError as e:
-                print("Error: Log record contains illegal, unescaped quotation mark ", e.msg, str(e))
+            except JSONDecodeError as err:
+                print("Error: Log record contains illegal, unescaped quotation mark ", err.msg, str(err))
 
     return log_list[1:]
 
@@ -188,8 +188,8 @@ def get_groups(log_file):
 # @return value: returns a list of ConsumedGroups in json format
 def get_groups_as_json(log_file):
     json_groups = []
-    groups = get_groups(log_file)
-    for group in groups:
+    regular_groups = get_groups(log_file)
+    for group in regular_groups:
         json_groups.append(group.__dict__)
     return json_groups
 

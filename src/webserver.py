@@ -37,7 +37,7 @@ def home():
 # Return - The call to scripts will print the parsed JSON
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
-    dirpath = request.args.get('path', default='*', type=str)
+    dirpath = request.args.get('path', default='./logs', type=str)
     print(dirpath)
     list = []
     for file in os.listdir(dirpath):

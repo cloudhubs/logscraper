@@ -12,7 +12,7 @@ class LogItem:
     warning = False
     messages = []
 
-    def _init_(self):
+    def __init__(self):
         self.organization = -1
         self.cluster_id = ""
         self.partition = -1

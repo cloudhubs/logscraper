@@ -1,7 +1,10 @@
 import flask
 import fnmatch
 import os
-from src import aggregatorscript, pipelinescript, offsetanalysis, clusteranalysis
+import aggregatorscript
+import pipelinescript
+import offsetanalysis
+import clusteranalysis
 from flask import Response, jsonify
 from flask import request
 
@@ -45,7 +48,7 @@ def get_logs():
                 logCount += 1
             if fnmatch.fnmatch(file, 'pipeline*.log'):
                 list.append(file)
-                list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+                list.append(pipelinescript.get_chunks((os.path.abspath(os.path.join(dirpath, file)))))
                 logCount += 1
     else:
         abort(404)

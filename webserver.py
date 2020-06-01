@@ -35,7 +35,7 @@ def home():
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
     # dirpath='./logs'
-    dirpath= request.args.get('path', default = '*', type = str) #'./logs'
+    dirpath= request.args.get('path', default = './logs', type = str) #'./logs'
     print(dirpath)
     list = []
     for file in os.listdir(dirpath):

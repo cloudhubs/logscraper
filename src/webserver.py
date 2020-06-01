@@ -4,6 +4,7 @@ import fnmatch
 import os
 import aggregatorscript
 import pipelinescript
+import analysis
 from flask import Response, jsonify
 from flask import request
 
@@ -35,9 +36,7 @@ def home():
 # Return - The call to scripts will print the parsed JSON
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
-    # dirpath='./logs'
-    dirpath= request.args.get('path', default = './logs', type = str) #'./logs'
-
+    dirpath = request.args.get('path', default='*', type=str)
     print(dirpath)
     list = []
     for file in os.listdir(dirpath):

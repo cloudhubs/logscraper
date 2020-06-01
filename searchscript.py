@@ -3,11 +3,13 @@ import sys
 
 
 def search_by_offset(path_to_log, offset):
-    log_list = aggregatorscript.get_log_list(path_to_log)
+    log_list = aggregatorscript.get_groups(path_to_log)
 
     groups = aggregatorscript.get_groups(log_list)
 
     return [group for group in groups if group.offset == offset]
+
+
 
 
 if __name__ == "__main__":

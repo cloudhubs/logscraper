@@ -3,7 +3,7 @@ import os
 from src import aggregatorscript, pipelinescript
 
 
-class OffsetSearchResult:
+class SearchResult:
     def __init__(self):
         self.offset = None
         self.consumedTime = None
@@ -29,7 +29,7 @@ def search_by_offset(log_dir, offset):
         for agg_log in aggregator_logs:
             if int(pipe_log.offset) == int(agg_log.offset) and int(pipe_log.offset) == offset:
                 match_flag = True
-                new_result = OffsetSearchResult()
+                new_result = SearchResult()
                 new_result.offset = pipe_log.offset
                 new_result.consumeTime = agg_log.timestamp
                 new_result.sentTime = pipe_log.timestamp
@@ -40,7 +40,7 @@ def search_by_offset(log_dir, offset):
                 break
 
         if not match_flag:
-            new_result = OffsetSearchResult
+            new_result = SearchResult
             new_result.offset = pipe_log.offset
             new_result.sentTime = pipe_log.timestamp
             new_result.pipelineMessages = pipe_log.messages
@@ -69,7 +69,7 @@ def get_offset_search_objects(matches: list):
     # create a search result Object for each match
     search_results = []
     for match in matches:
-        new_result = OffsetSearchResult()
+        new_result = SearchResult()
         new_result.timestamp = match.timestamp  # location of timestamp in ConsumedGrouping
         new_result.description = [[message[0], message[1]] for message in match.messages]
         new_result.offset = match.offset
@@ -83,4 +83,4 @@ def get_offset_search_objects(matches: list):
 if __name__ == "__main__":
 
     test_results = search_by_offset("../logs/", 28)
-    print(test_results[0].consumed)
+    print(test_results[0])

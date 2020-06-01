@@ -167,6 +167,7 @@ def get_chunks(path):
     chunks[0].clusterName = []
     chunks[0].clusterName.append(tempCluster)
     index = 0
+    # Iterates through each LogItem and creates chunks based on matching offsets
     for i in range(1, len(logItems)):
         if chunks[index].offset == logItems[i].offset:
             tempCluster

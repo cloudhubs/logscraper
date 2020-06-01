@@ -1,4 +1,3 @@
-import json
 import flask
 import fnmatch
 import os
@@ -44,10 +43,10 @@ def get_logs():
     for file in os.listdir(dirpath):
         if fnmatch.fnmatch(file, 'aggregator*.log'):
             list.append(file)
-            list.append(aggregatorScript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
         if fnmatch.fnmatch(file, 'pipeline*.log'):
             list.append(file)
-            list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
     return jsonify(list)
 
 # Functionality - Return the status of results for given cluster and org id's
@@ -58,6 +57,7 @@ def get_logs():
 # Return - The call to scripts will print the JSON status and result
 @app.route('/logs/clusterorgstatus', methods=['GET'])
 def search_by_clusterid_orgid():
+
     filepath = request.args.get('path', default='*', type=str)
     cluster = request.args.get('cluster_id', default='*', type=str)
     org = request.args.get('org_id', default='*', type=str)
@@ -78,6 +78,7 @@ def search_by_offset():
     filepath = request.args.get('path', default='*', type=str)
     offset = request.args.get('offset', default='*', type=str)
     list = []
+
     list = offsetanalysis.search_by_offset(filepath, offset)
     return jsonify(list)
 

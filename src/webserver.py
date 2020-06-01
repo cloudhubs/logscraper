@@ -29,7 +29,7 @@ def home():
 <p> Home page of Team A to parse log files.</p>
 <p> To parse logs use "/logs/default" with argument path: path to log files (usually thisRepositoryHome/logs)</p>
 <p> To search by cluster id and group id use "/logs/clusterorgstatus" with parameters path, clusterid, and orgid </p>
-<p> To search by offset use "/logs/offsetStatus" with parameters path and offset </p>
+<p> To search by offset use "/logs/offstatus" with parameters path and offset </p>
 '''
 
 # Functionality - Parse logs from given directory
@@ -71,7 +71,7 @@ def get_logs():
 @app.route('/logs/clusterorgstatus', methods=['GET'])
 def search_by_clusterid_orgid():
 
-    dirpath = request.args.get('path', default='*', type=str)
+    dirpath = request.args.get('path', default='./logs', type=str)
     cluster = request.args.get('cluster_id', default='*', type=str)
     org = request.args.get('org_id', default='*', type=str)
     logCount = 0
@@ -85,7 +85,7 @@ def search_by_clusterid_orgid():
         if (logCount == 0):
             abort(404)
         else:
-            list = search_by_cluster(dirpath, org, cluster)
+            list = clusteranalysis.search_by_cluster(dirpath, org, cluster)
     else:
         abort(404)
 
@@ -97,12 +97,12 @@ def search_by_clusterid_orgid():
 # dirpath: path to a directory of logs
 # offset: The given offset to search for
 # Return - The call to scripts will print the JSON status and result
-@app.route('/logs/offsetStatus', methods=['GET'])
+@app.route('/logs/offstatus', methods=['GET'])
 def search_by_offset():
-    dirpath = request.args.get('path', default='*', type=str)
+    dirpath = request.args.get('path', default='./logs', type=str)
     offset = request.args.get('offset', default='*', type=str)
     list = []
-
+    logCount = 0
     if os.path.exists(dirpath):
         for file in os.listdir(dirpath):
             if fnmatch.fnmatch(file, 'aggregator*.log'):
@@ -112,7 +112,7 @@ def search_by_offset():
         if (logCount == 0):
             abort(404)
         else:
-            list = search_by_cluster(dirpath, offset)
+            list = offsetanalysis.search_by_offset(dirpath, offset)
     else:
         abort(404)
     return jsonify(list)

@@ -8,55 +8,29 @@ class SearchResult:
         self.description = []
 
 
-class AggregationSearch:
+# @param path_to_log: log file to read the logs from
+# @param offset: the offset to search by
+# @return value: list of ConsumedGroups found in log file that match the given offset
+def search_by_offset(cls, path_to_log, offset):
+    groups = aggregatorscript.get_groups(path_to_log)
+    groups.extend(pipelinescript.get_log_items(path_to_log))
+    matches = [group for group in groups if group.offset == offset]
 
-    # @param path_to_log: log file to read the logs from
-    # @param offset: the offset to search by
-    # @return value: list of ConsumedGroups found in log file that match the given offset
-    @staticmethod
-    def search_by_offset(cls, path_to_log, offset):
-        groups = aggregatorscript.get_groups(path_to_log)
-        matches = [group for group in groups if group.offset == offset]
-
-        return get_search_objects(matches)
+    return get_search_objects(matches)
 
 
-    # @param path_to_log: log file to read the logs from
-    # @param organization: the organization id to search by
-    # @param cluster_id: the id of the cluster to search by
-    # @return value: list of ConsumedGroups found in log file that match the given organization and cluster_id
-    @staticmethod
-    def search_by_org_cluster(cls, path_to_log, organization, cluster_id):
-        groups = aggregatorscript.get_groups(path_to_log)
-        cluster_matches = [group for group in groups if group.cluster_id == cluster_id]
-        matches = [matches for matches in cluster_matches if matches.organization == organization]
+# @param path_to_log: log file to read the logs from
+# @param organization: the organization id to search by
+# @param cluster_id: the id of the cluster to search by
+# @return value: list of ConsumedGroups found in log file that match the given organization and cluster_id
+def search_by_org_cluster(cls, path_to_log, organization, cluster_id):
+    groups = aggregatorscript.get_groups(path_to_log)
+    groups.extend(pipelinescript.get_log_items(path_to_log))
+    cluster_matches = [group for group in groups if group.cluster_id == cluster_id]
+    matches = [matches for matches in cluster_matches if matches.organization == organization]
 
-        return get_search_objects(matches)
+    return get_search_objects(matches)
 
-
-class PipelineSearch:
-
-    # @param path_to_log: log file to read the logs from
-    # @param offset: the offset to search by
-    # @return value: list of ConsumedGroups found in log file that match the given offset
-    @staticmethod
-    def search_by_offset(cls, path_to_log, offset):
-        groups = pipelinescript.get_log_items(path_to_log)
-        matches = [group for group in groups if group.offset == offset]
-
-        return get_search_objects(matches)
-
-    # @param path_to_log: log file to read the logs from
-    # @param organization: the organization id to search by
-    # @param cluster_id: the id of the cluster to search by
-    # @return value: list of ConsumedGroups found in log file that match the given organization and cluster_id
-    @staticmethod
-    def search_by_org_cluster(cls, path_to_log, organization, cluster_id):
-        groups = pipelinescript.get_log_items(path_to_log)
-        cluster_matches = [group for group in groups if group.cluster_id == cluster_id]
-        matches = [matches for matches in cluster_matches if matches.organization == organization]
-
-        return get_search_objects(matches)
 
 # @param matches: list of matches from the other search methods
 # @return value: returns the matches in SearchResult format

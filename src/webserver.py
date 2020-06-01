@@ -31,13 +31,14 @@ def home():
 <p> To parse logs use "/logs/default" with argument path: path to log files (usually thisRepositoryHome/logs)</p>
 '''
 
-
 # Functionality - Parse logs from given directory
 # Parameters - path: path to logs usually thisRepositoryHome/logs
 # Return - The call to scripts will print the parsed JSON
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
+
     dirpath = request.args.get('path', default='./logs', type=str)
+
     print(dirpath)
     list = []
     for file in os.listdir(dirpath):
@@ -48,7 +49,6 @@ def get_logs():
             list.append(file)
             list.append(pipelineScript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
     return jsonify(list)
-
 
 # Functionality - Return the status of results for given cluster and org id's
 # Parameters
@@ -80,6 +80,5 @@ def search_by_offset():
     list = []
     list = offsetanalysis.search_by_offset(filepath, offset)
     return jsonify(list)
-
 
 app.run()

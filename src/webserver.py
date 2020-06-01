@@ -5,7 +5,7 @@ import aggregatorscript
 import pipelinescript
 import offsetanalysis
 import clusteranalysis
-from flask import Response, jsonify
+from flask import Response, jsonify, abort
 from flask import request
 
 app = flask.Flask(__name__)
@@ -26,8 +26,10 @@ class LogItem:
 @app.route('/', methods=['GET'])
 def home():
     return '''<h1><center>Log Scraper Server</center></h1>
-<p>Home page of Team A to parse log files.</p>
+<p> Home page of Team A to parse log files.</p>
 <p> To parse logs use "/logs/default" with argument path: path to log files (usually thisRepositoryHome/logs)</p>
+<p> To search by cluster id and group id use "/logs/clusterorgstatus" with parameters path, clusterid, and orgid </p>
+<p> To search by offset use "/logs/offsetStatus" with parameters path and offset </p>
 '''
 
 # Functionality - Parse logs from given directory

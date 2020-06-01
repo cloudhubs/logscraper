@@ -3,19 +3,19 @@ import json
 
 # Class to hold desired information about each log
 class LogItem:
-    orgId = ""
+    orgId = -1
     clusterName = ""
-    partition = ""
-    offset = ""
+    partition = -1
+    offset = -1
     timestamp = ""
     error = False
     warning = False
     messages = []
     def _init_(self):
-        self.orgId = ""
+        self.orgId = -1
         self.clusterName = ""
-        self.partition = ""
-        self.offset = ""
+        self.partition = -1
+        self.offset = -1
         self.timestamp = ""
         self.error = False
         self.warning = False
@@ -190,4 +190,10 @@ def get_chunks(path):
     for h in range(len(chunks)):
         json_logs.append(chunks[h].__dict__)
     return json_logs
+
+
+logs = get_chunks("logs/pipeline.log")
+for log in logs:
+    print(log['clusterName'], log['offset'], log['messages'])
+    
 

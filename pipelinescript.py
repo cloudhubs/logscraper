@@ -4,7 +4,7 @@ import json
 # Class to hold desired information about each log
 class LogItem:
 
-    def _init_(self):
+    def __init__(self):
         orgId = -1
         clusterName = ""
         partition = -1
@@ -140,6 +140,8 @@ def get_log_items(pipeline_path):
     for i in range(len(logItems)):
         json_logs.append(logItems[i].__dict__)
     return json_logs
+
+
 
 
 # If you want to test with command line, input file name here

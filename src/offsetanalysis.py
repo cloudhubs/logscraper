@@ -1,12 +1,10 @@
 import aggregatorscript, pipelinescript
 
-
 class SearchResult:
     def __init__(self):
         self.timestamp = None
         self.status = None
         self.description = []
-
 
 # @param path_to_log: log file to read the logs from
 # @param offset: the offset to search by
@@ -46,6 +44,8 @@ def get_search_objects(matches: list):
         new_result.status = "found" if 'error' not in (message[0] for message in match.messages) else "error"
         search_results.append(new_result)
     return search_results
+
+
 
 
 if __name__ == "__main__":

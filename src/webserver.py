@@ -3,7 +3,9 @@ import fnmatch
 import os
 import aggregatorscript
 import pipelinescript
-from flask import jsonify
+import offsetanalysis
+import clusteranalysis
+from flask import Response, jsonify
 from flask import request
 
 app = flask.Flask(__name__)
@@ -33,7 +35,9 @@ def home():
 # Return - The call to scripts will print the parsed JSON
 @app.route('/logs/default', methods=['GET'])
 def get_logs():
-    dirpath= request.args.get('path', default = '*', type = str) #'./logs'
+
+    dirpath = request.args.get('path', default='./logs', type=str)
+
     print(dirpath)
     list = []
     for file in os.listdir(dirpath):
@@ -45,46 +49,37 @@ def get_logs():
             list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
     return jsonify(list)
 
-
-
-# Functionality - Parse logs from given directory
-# Parameters - path: path to logs usually thisRepositoryHome/logs
-# Return - The call to scripts will print the parsed JSON
+# Functionality - Return the status of results for given cluster and org id's
+# Parameters
+# filepath: path to a file to look through
+# cluster: The given cluster id to search for
+# org: The given org id to search for
+# Return - The call to scripts will print the JSON status and result
 @app.route('/logs/clusterorgstatus', methods=['GET'])
 def search_by_clusterid_orgid():
-    dirpath = request.args.get('path', default='*', type=str)  # './logs'
-    print(dirpath)
-    list = []
-    for file in os.listdir(dirpath):
-        if fnmatch.fnmatch(file, 'aggregator*.log'):
-            list.append(file)
-            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
 
-        if fnmatch.fnmatch(file, 'pipeline*.log'):
-            list.append(file)
-            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
+    filepath = request.args.get('path', default='*', type=str)
+    cluster = request.args.get('cluster_id', default='*', type=str)
+    org = request.args.get('org_id', default='*', type=str)
+
+    list = []
+    list = search_by_cluster(filepath, cluster, org)
 
     return jsonify(list)
 
 
-
-# Functionality - Parse logs from given directory
-# Parameters - path: path to logs usually thisRepositoryHome/logs
-# Return - The call to scripts will print the parsed JSON
+# Functionality - Return the status of results for given offset
+# Parameters
+# filepath: path to a file to look through
+# offset: The given offset to search for
+# Return - The call to scripts will print the JSON status and result
 @app.route('/logs/offsetStatus', methods=['GET'])
 def search_by_offset():
-    dirpath = request.args.get('path', default='*', type=str)  # './logs'
-    print(dirpath)
+    filepath = request.args.get('path', default='*', type=str)
+    offset = request.args.get('offset', default='*', type=str)
     list = []
-    for file in os.listdir(dirpath):
-        if fnmatch.fnmatch(file, 'aggregator*.log'):
-            list.append(file)
-            list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
-        if fnmatch.fnmatch(file, 'pipeline*.log'):
-            list.append(file)
-            list.append(pipelinescript.get_log_items((os.path.abspath(os.path.join(dirpath, file)))))
 
+    list = offsetanalysis.search_by_offset(filepath, offset)
     return jsonify(list)
-
 
 app.run()

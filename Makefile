@@ -17,7 +17,7 @@ test:
 	${TEST_TOOL} -v tests
 
 style:
-	${PYCODESTYLE_TOOL}
+	${PYCODESTYLE_TOOL} .
 
 coverage:
 	${TEST_TOOL} --cov=average --cov-report term-missing

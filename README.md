@@ -1,5 +1,7 @@
 # LogScraper
 
+## Description
+
 ## Git
 
 ```bash
@@ -37,3 +39,8 @@ Get overview of available APIs.
 ```
 curl -X GET 'http://localhost:5000/
 ```
+
+## Documentation
+
+Documentation is hosted on Github Pages <https://cloudhubs.github.io/logscraper/>.
+Sources are located in [docs](https://github.com/cloudhubs/logscraper/blob/master/docs/).

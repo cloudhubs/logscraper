@@ -3,8 +3,8 @@ import json
 
 # Class to hold desired information about each log
 class LogItem:
-    orgId = -1
-    clusterName = ""
+    organization = -1
+    cluster_id = ""
     partition = -1
     offset = -1
     timestamp = ""
@@ -12,8 +12,8 @@ class LogItem:
     warning = False
     messages = []
     def _init_(self):
-        self.orgId = -1
-        self.clusterName = ""
+        self.organization = -1
+        self.cluster_id = ""
         self.partition = -1
         self.offset = -1
         self.timestamp = ""
@@ -70,9 +70,9 @@ def get_log_items(pipeline_path):
                     message = logs[i - 1]['message'].split(',')
                     for h in range(len(message)):
                         if "OrgId" in message[h]:
-                            item.orgId = message[h][message[h].find("=") + 1:]
+                            item.organization = message[h][message[h].find("=") + 1:]
                         elif "ClusterName" in message[h]:
-                            item.clusterName = message[h][message[h].find("=") + 2:-1]
+                            item.cluster_id = message[h][message[h].find("=") + 2:-1]
 
                 # check for partition and offset
                 if "Partition" in msgArr[0] or "Offset" in msgArr[0]:
@@ -114,9 +114,9 @@ def get_log_items(pipeline_path):
             message = logs[len(logs) - 1]['message'].split(',')
             for h in range(len(message)):
                 if "OrgId" in message[i]:
-                    item.orgId = message[h][message[h].find("=") + 1:]
+                    item.organization = message[h][message[h].find("=") + 1:]
                 elif "ClusterName" in message[h]:
-                    item.clusterName = message[h][message[h].find("=") + 2:-1]
+                    item.cluster_id = message[h][message[h].find("=") + 2:-1]
         # check for partition and offset
         if "Partition" in msgArr[0] or "Offset" in msgArr[0]:
             message = msgArr[0].split(';')
@@ -160,16 +160,16 @@ def get_chunks(path):
 
     chunks = []
     chunks.append(logItems[0])
-    tempCluster = logItems[0].clusterName
-    chunks[0].clusterName = []
-    chunks[0].clusterName.append(tempCluster)
+    tempCluster = logItems[0].cluster_id
+    chunks[0].cluster_id = []
+    chunks[0].cluster_id.append(tempCluster)
     index = 0
     # Iterates through each LogItem and creates chunks based on matching offsets
     for i in range(1, len(logItems)):
         if chunks[index].offset == logItems[i].offset:
             tempCluster
-            if len(logItems[i].clusterName) > 0:
-                chunks[index].clusterName.append(logItems[i].clusterName)
+            if len(logItems[i].cluster_id) > 0:
+                chunks[index].cluster_id.append(logItems[i].cluster_id)
 
             for j in range(len(logItems[i].offset)):
                 chunks[index].messages.append(logItems[i].messages[j])
@@ -181,9 +181,9 @@ def get_chunks(path):
         else:
             index += 1
             chunks.append(logItems[i])
-            tempCluster = logItems[i].clusterName
-            chunks[index].clusterName = []
-            chunks[index].clusterName.append(tempCluster)
+            tempCluster = logItems[i].cluster_id
+            chunks[index].cluster_id = []
+            chunks[index].cluster_id.append(tempCluster)
     json_logs = []
     for h in range(len(chunks)):
         json_logs.append(chunks[h].__dict__)

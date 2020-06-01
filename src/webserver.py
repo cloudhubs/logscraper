@@ -1,10 +1,8 @@
-import json
 import flask
 import fnmatch
 import os
-import aggregatorScript
-import pipelineScript
-from flask import Response, jsonify
+from src import aggregatorScript, pipelineScript
+from flask import jsonify
 from flask import request
 
 app = flask.Flask(__name__)

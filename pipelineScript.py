@@ -58,7 +58,6 @@ def get_log_items(pipeline_path):
     msg_arr = []
     partition = ""
     offset = ""
-    info_message = ""
     # Loop through each line of the logs and grab desired information
     for i in range(len(logs)):
         # Beginning of a chunk of data, so save its message

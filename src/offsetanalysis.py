@@ -1,15 +1,17 @@
 import aggregatorscript, pipelinescript
 
+
 class SearchResult:
     def __init__(self):
         self.timestamp = None
         self.status = None
         self.description = []
 
+
 # @param path_to_log: log file to read the logs from
 # @param offset: the offset to search by
 # @return value: list of ConsumedGroups found in log file that match the given offset
-def search_by_offset(cls, path_to_log, offset):
+def search_by_offset(path_to_log, offset):
     groups = aggregatorscript.get_groups(path_to_log)
     groups.extend(pipelinescript.get_log_items(path_to_log))
     matches = [group for group in groups if group.offset == offset]
@@ -21,7 +23,7 @@ def search_by_offset(cls, path_to_log, offset):
 # @param organization: the organization id to search by
 # @param cluster_id: the id of the cluster to search by
 # @return value: list of ConsumedGroups found in log file that match the given organization and cluster_id
-def search_by_org_cluster(cls, path_to_log, organization, cluster_id):
+def search_by_org_cluster(path_to_log, organization, cluster_id):
     groups = aggregatorscript.get_groups(path_to_log)
     groups.extend(pipelinescript.get_log_items(path_to_log))
     cluster_matches = [group for group in groups if group.cluster_id == cluster_id]
@@ -44,8 +46,6 @@ def get_search_objects(matches: list):
         new_result.status = "found" if 'error' not in (message[0] for message in match.messages) else "error"
         search_results.append(new_result)
     return search_results
-
-
 
 
 if __name__ == "__main__":

@@ -141,18 +141,15 @@ def get_log_items(pipeline_path):
         isWarning = False
         partition = -1
         offset = -1
-
-    # Convert objects to json objects
-    #json_logs = []
-    #for i in range(len(logItems)):
-     #   json_logs.append(logItems[i].__dict__)
     return logItems
+
 
 # Gets the key for a sorting algorithm
 # @params the LogItem to return the offset from
 # @return the offset of the logItem
 def get_offset(logItem):
     return logItem.offset
+
 
 # Groups the logItem chunks together based on offset
 # @param the path to the pipeline log file
@@ -191,10 +188,3 @@ def get_chunks(path):
     for h in range(len(chunks)):
         json_logs.append(chunks[h].__dict__)
     return json_logs
-
-
-logs = get_chunks("logs/pipeline.log")
-for log in logs:
-    print(log['clusterName'], log['offset'], log['messages'])
-    
-

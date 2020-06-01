@@ -159,11 +159,7 @@ def group_consumed_offset_logs(logs):
                         processing_group = False
                         local_record_index = 0
                 else:
-                    # regular message of group
-                    if 'time' in record:
-                        current_group.messages.append([record['level'], record['message']])
-                    else:
-                        current_group.messages.append([record['level'], record['message']])
+                    current_group.messages.append([record['level'], record['message']])
                     local_record_index += 1
 
     # add last group to groupings

@@ -4,6 +4,7 @@ import fnmatch
 import os
 import aggregatorscript
 import pipelinescript
+import analysis
 from flask import Response, jsonify
 from flask import request
 

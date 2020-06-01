@@ -1,6 +1,7 @@
 import fnmatch
 import os
-from src import aggregatorscript, pipelinescript
+import aggregatorscript
+import pipelinescript
 
 
 class SearchResult:
@@ -50,7 +51,8 @@ def search_by_offset(log_dir, offset):
     return results
 
 
-# @param path_to_log: log file to read the logs from
+# @param path_to_log: log file to read the
+# logs from
 # @param offset: the offset to search by
 # @return value: list of ConsumedGroups found in log file that match the given offset
 def get_results_by_offset(path_to_log, offset, pipeline=True):

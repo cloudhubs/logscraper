@@ -152,7 +152,7 @@ def get_offset(log_item):
 # @return a list of the new merged chunks
 def get_chunks(path):
     log_items = get_log_items(path)
-    log_items.sort(key=get_offset)
+    
 
     chunks = [log_items[0]]
     temp_cluster = log_items[0].cluster_id

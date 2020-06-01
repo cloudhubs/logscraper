@@ -1,7 +1,8 @@
 import fnmatch
 import os
-from src import aggregatorscript, pipelinescript
-from src.offsetanalysis import SearchResult
+import aggregatorscript
+import pipelinescript
+from offsetanalysis import SearchResult
 
 
 def search_by_org_cluster(log_dir, organization, cluster_id):

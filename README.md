@@ -44,3 +44,27 @@ curl -X GET 'http://localhost:5000/
 
 Documentation is hosted on Github Pages <https://cloudhubs.github.io/logscraper/>.
 Sources are located in [docs](https://github.com/cloudhubs/logscraper/blob/master/docs/).
+
+## Tools
+
+### `log_producer.py`
+
+Produce messages from selected input file to Kafka topic.
+
+#### Usage:
+
+```
+ log_producer.py [-h] [-v] [-b BROKER] [-t TOPIC] [-d DELAY] -i INPUT
+
+ optional arguments:
+   -h, --help            show this help message and exit
+   -v, --verbose         make it verbose
+   -b BROKER, --broker BROKER
+                         broker (default 'localhost:9092')
+   -t TOPIC, --topic TOPIC
+                         topic (default 'logs')
+   -d DELAY, --delay DELAY
+                         delay between messages
+   -i INPUT, --input INPUT
+                         input file with messages to be produced
+```

@@ -70,7 +70,6 @@ def get_logs():
 # Return - The call to scripts will print the JSON status and result
 @app.route('/logs/clusterorgstatus', methods=['GET'])
 def search_by_clusterid_orgid():
-
     dirpath = request.args.get('path', default='./logs', type=str)
     cluster = request.args.get('cluster_id', default='*', type=str)
     org = request.args.get('org_id', default='*', type=str)

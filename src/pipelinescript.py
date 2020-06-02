@@ -144,7 +144,7 @@ def get_log_items(pipeline_path):
 # @params the LogItem to return the offset from
 # @return the offset of the logItem
 def get_offset(log_item):
-    return log_item.offset
+    return int(log_item.offset)
 
 
 # Groups the logItem chunks together based on offset
@@ -166,7 +166,7 @@ def get_chunks(path):
             if len(log_items[i].cluster_id) > 0:
                 chunks[index].cluster_id.append(log_items[i].cluster_id)
 
-            for j in range(len(log_items[i].offset)):
+            for j in range(len(log_items[i].messages)):
                 chunks[index].messages.append(log_items[i].messages[j])
 
             if log_items[i].error:

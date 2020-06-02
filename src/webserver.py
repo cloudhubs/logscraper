@@ -99,8 +99,8 @@ def search_by_clusterid_orgid():
 # Return - The call to scripts will print the JSON status and result
 @app.route('/logs/offstatus', methods=['GET'])
 def search_by_offset():
-    dirpath = request.args.get('path', default='./logs', type=str)
     offset = request.args.get('offset', default='*', type=str)
+    dirpath = request.args.get('path', default='./logs', type=str)
     list = []
     logCount = 0
     if os.path.exists(dirpath):

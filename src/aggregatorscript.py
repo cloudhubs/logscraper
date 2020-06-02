@@ -13,8 +13,8 @@ class ConsumedGrouping:
         self.timestamp = None
         self.organization = None
         self.cluster_id = None
+        self.offset = None
         self.error = False  # flag set to true if an error occured in this group
-
 
 
 # @param file: path to the log file to decode and return
@@ -117,7 +117,9 @@ def group_consumed_offset_logs(logs):
             raise Exception("Error: log with no message")
 
         if not processing_group and record['message'].startswith("Consumed message offset"):
+            offset = record['message'].split(" ")[3]
             current_group = ConsumedGrouping()
+            current_group.current_offset = offset
             processing_group = True
             local_record_index = 1
             current_group.timestamp = record['time']
@@ -146,6 +148,7 @@ def group_consumed_offset_logs(logs):
                     # end of group
                     groupings.append(current_group)
                     if record['message'].startswith("Consumed"):
+                        offset = record['message'].split(" ")[3]
                         local_record_index = 1
                         current_group = ConsumedGrouping()
                         current_group.offset = offset
@@ -179,10 +182,6 @@ def get_groups(log_file):
     for group_category in groups:
         if len(group_category) == 0:
             groups.remove(group_category)
-
-    for group_category in groups:
-        for group in group_category:
-            print(group.messages)
 
     return groups[0]
 

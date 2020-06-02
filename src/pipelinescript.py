@@ -70,7 +70,7 @@ def get_log_items(pipeline_path):
                     message = logs[i - 1]['message'].split(',')
                     for h in range(len(message)):
                         if "OrgId" in message[h]:
-                            item.organization = (int(message[h][message[h].find("=") + 1:]))
+                            item.organization = int(message[h][message[h].find("=") + 1:])
                         elif "ClusterName" in message[h]:
                             item.cluster_id = message[h][message[h].find("=") + 2:-1]
 
@@ -79,9 +79,9 @@ def get_log_items(pipeline_path):
                     message = msg_arr[0].split(';')
                     for k in range(len(message)):
                         if "Partition" in message[k]:
-                            partition = (int(message[k][12:]))
+                            partition = int(message[k][12:])
                         elif "Offset" in message[k]:
-                            offset = (int(message[k][9:]))
+                            offset = message[k][9:]
                 item.partition = partition
                 item.offset = offset
 
@@ -114,7 +114,7 @@ def get_log_items(pipeline_path):
             message = logs[len(logs) - 1]['message'].split(',')
             for h in range(len(message)):
                 if "OrgId" in message[i]:
-                    item.organization = (int(message[h][message[h].find("=") + 1:]))
+                    item.organization = int(message[h][message[h].find("=") + 1:])
                 elif "ClusterName" in message[h]:
                     item.cluster_id = message[h][message[h].find("=") + 2:-1]
         # check for partition and offset
@@ -123,9 +123,9 @@ def get_log_items(pipeline_path):
             print(message)
             for j in range(len(message)):
                 if "Partition" in message[j]:
-                    item.partition = (int(message[j][11:]))
+                    item.partition = int(message[j][11:])
                 elif "Offset" in message[i]:
-                    item.offset = (int(message[j][9:]))
+                    item.offset = message[j][9:]
 
         # Assign message array and error/warning members
         item.messages = [None] * len(msg_arr)
@@ -152,7 +152,7 @@ def get_offset(log_item):
 # @return a list of the new merged chunks
 def get_chunks(path):
     log_items = get_log_items(path)
-    log_items.sort(key=get_offset)
+
 
     chunks = [log_items[0]]
     temp_cluster = log_items[0].cluster_id

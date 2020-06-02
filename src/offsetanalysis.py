@@ -3,7 +3,12 @@ import os
 import aggregatorscript
 import pipelinescript
 
-
+class SearchResult:
+    def __init__(self):
+        self.timestamp = None
+        self.status = None
+        self.description = []
+        
 class SearchResult:
     def __init__(self):
         self.offset = None
@@ -83,6 +88,5 @@ def get_offset_search_objects(matches: list):
 
 
 if __name__ == "__main__":
-
     test_results = search_by_offset("../logs/", 28)
     print(test_results[0])

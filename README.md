@@ -32,6 +32,12 @@ Argument: path - path to log files, usually inside directory logs of logscraper 
 ```bash
 curl -X GET 'http://localhost:5000/logs/default?path=/path/to/logs'
 ```
+This endpoint makes following transformations:
+
+* Filtering of message type, only consuming messages, not taking URI requests
+* Grouping based on related messages
+* Filtering based on offset
+
 
 ## API
 
@@ -49,7 +55,7 @@ Sources are located in [docs](https://github.com/cloudhubs/logscraper/blob/maste
 
 ### `log_producer.py`
 
-Produce messages from selected input file to Kafka topic.
+Produces messages from selected input file to Kafka topic.
 
 #### Usage:
 

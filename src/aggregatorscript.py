@@ -117,13 +117,15 @@ def group_consumed_offset_logs(logs):
             raise Exception("Error: log with no message")
 
         if not processing_group and record['message'].startswith("Consumed message offset"):
+            record['message']
             offset = record['message'].split(" ")[3]
             current_group = ConsumedGrouping()
             current_group.current_offset = offset
             processing_group = True
             local_record_index = 1
             current_group.timestamp = record['time']
-            current_group.messages.append([record['level'], record['message']])
+            current_group.messages.append([record['level'], record['message'].rep])
+
         elif not processing_group:
             # record not apart of a group, move on
             continue
@@ -161,6 +163,7 @@ def group_consumed_offset_logs(logs):
                 else:
                     current_group.messages.append([record['level'], record['message']])
                     local_record_index += 1
+
 
     # add last group to groupings
     if current_group is not None:

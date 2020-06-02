@@ -30,6 +30,7 @@ def home():
 <p> To parse logs use "/logs/default" with argument path: path to log files (usually thisRepositoryHome/logs)</p>
 <p> To search by cluster id and group id use "/logs/clusterorgstatus" with parameters path, clusterid, and orgid </p>
 <p> To search by offset use "/logs/offstatus" with parameters path and offset </p>
+<p> Example path for intended organization format "logs/pipeline" This will only parse pipeline.log for Mark </p>
 '''
 
 # Functionality - Parse logs from given directory
@@ -61,6 +62,36 @@ def get_logs():
         abort(404)
     else:
         return jsonify(list)
+
+
+
+# Functionality - Parse pipeline.log only: This is an example of one file for team 3's viewing
+# Parameters - path: path to logs usually thisRepositoryHome/logs
+# Return - The call to scripts will print the parsed JSON
+@app.route('/logs/pipeline', methods=['GET'])
+def get_pipelinelog():
+
+    dirpath = request.args.get('path', default='./logs', type=str)
+    logCount = 0
+    print(dirpath)
+    list = []
+    if os.path.exists(dirpath):
+        for file in os.listdir(dirpath):
+            if fnmatch.fnmatch(file, 'pipeline.log'):
+                list.append(file)
+                list.append(pipelinescript.get_chunks((os.path.abspath(os.path.join(dirpath, file)))))
+                logCount += 1
+    else:
+        abort(404)
+
+    # If logCount ends up being 0, then that means there was no valid log files given
+    # and therefore wrong path to logs are provided
+    if(logCount == 0):
+        abort(404)
+    else:
+        return jsonify(list)
+
+
 
 # Functionality - Return the status of results for given cluster and org id's
 # Parameters

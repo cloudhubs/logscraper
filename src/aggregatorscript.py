@@ -30,7 +30,12 @@ def get_log_list(file):
     with open(file, encoding='utf-8') as f:
         for line in itertools.islice(f, 10, None):
             try:
+                line = line.replace("\\\\", "")
+                line = line.replace("\\t", "")
+                line = line.replace("\\n", "")
+                line = line.replace("\\\"", "")
                 log_list.append(json.loads(line))
+
             except JSONDecodeError as err:
                 print("Error: Log record contains illegal, unescaped quotation mark ", err.msg, str(err))
 
@@ -112,19 +117,20 @@ def group_consumed_offset_logs(logs):
     local_record_index = 0  # for keeping track of how many records since first in a group
 
     for record in logs:
+        record['message'] = record['message'].replace("\\n", "")
+        record['message'] = record['message'].replace("\\t", "")
         # make sure each JSON has an associated message
         if 'message' not in record:
             raise Exception("Error: log with no message")
 
         if not processing_group and record['message'].startswith("Consumed message offset"):
-            record['message']
             offset = record['message'].split(" ")[3]
             current_group = ConsumedGrouping()
             current_group.current_offset = offset
             processing_group = True
             local_record_index = 1
             current_group.timestamp = record['time']
-            current_group.messages.append([record['level'], record['message'].rep])
+            current_group.messages.append([record['level'], record['message']])
 
         elif not processing_group:
             # record not apart of a group, move on

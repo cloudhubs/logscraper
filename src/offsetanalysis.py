@@ -9,7 +9,7 @@ class SearchResult:
         self.timestamp = None
         self.status = None
         self.description = []
-        
+
 class SearchResult:
     def __init__(self):
         self.offset = None

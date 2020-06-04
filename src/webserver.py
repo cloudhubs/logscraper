@@ -33,6 +33,7 @@ def home():
 <p> Example path for intended organization format "logs/pipeline" This will only parse pipeline.log for Mark </p>
 '''
 
+
 # Functionality - Parse logs from given directory
 # Parameters - path: path to logs usually thisRepositoryHome/logs
 # Return - The call to scripts will print the parsed JSON

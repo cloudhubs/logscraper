@@ -3,6 +3,7 @@ import os
 import aggregatorscript
 import pipelinescript
 
+
 class SearchResult:
     def __init__(self):
         self.timestamp = None

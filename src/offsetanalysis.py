@@ -10,6 +10,7 @@ class SearchResult:
         self.status = None
         self.description = []
 
+
 class SearchResult:
     def __init__(self):
         self.offset = None

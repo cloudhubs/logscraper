@@ -35,7 +35,8 @@ Source codes of this service are available at <https://github.com/RedHatInsights
 
 ### Whole data flow based on CCX Data Pipeline and Insights Results Aggregator
 
-The whole data flow is described there <Pipeline.md>
+The whole data flow is [described there](Pipeline.md)
+
 ![data_flow](Pipeline.png "Data flow")
 
 

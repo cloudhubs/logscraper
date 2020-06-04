@@ -7,7 +7,7 @@ Customer Services are part of the overall workflow developed and deployed by the
 
 ## Overall architecture
 
-![architecture](Architecture.png "Overall architecture")
+![architecture](Pipeline.png "Overall architecture")
 
 1. Event about new data from insights operator is consumed from Kafka. That event contains (among other things) URL to S3 Bucket
 1. Insights operator data is read from S3 Bucket and insights rules are applied to that data in `ccx-data-pipeline`

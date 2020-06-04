@@ -65,7 +65,6 @@ def get_logs():
         return jsonify(list)
 
 
-
 # Functionality - Parse pipeline.log only: This is an example of one file for team 3's viewing
 # Parameters - path: path to logs usually thisRepositoryHome/logs
 # Return - The call to scripts will print the parsed JSON

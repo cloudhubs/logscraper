@@ -74,3 +74,23 @@ Produces messages from selected input file to Kafka topic.
    -i INPUT, --input INPUT
                          input file with messages to be produced
 ```
+
+### `anonymize_aggegator_log.py`
+
+Anonymize aggregator log files by hashing organization ID and cluster ID.
+
+#### Usage:
+
+```
+ anonymize_aggegator_log.py [-h] -s SALT
+
+ optional arguments:
+   -h, --help            show this help message and exit
+   -s SALT, --salt SALT  salt for hashing algorithm
+```
+
+### Example:
+
+```
+ anonymize_aggegator_log.py -s foobar < original.log > anonymized.log
+```

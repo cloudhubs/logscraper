@@ -12,9 +12,9 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
     for file in os.listdir(log_dir):
         full_path = os.path.join(log_dir, file)
         if fnmatch.fnmatch(full_path, '*/aggregator*.log'):
-            aggregator_logs.extend(get_results_by_org_cluster(full_path, organization, cluster_id, False))
+            aggregator_logs.append(get_results_by_org_cluster(full_path, organization, cluster_id, False))
         elif fnmatch.fnmatch(full_path, '*/pipeline*.log'):
-            pipeline_logs.extend(get_results_by_org_cluster(full_path, organization, cluster_id, True))
+            pipeline_logs.append(get_results_by_org_cluster(full_path, organization, cluster_id, True))
 
     for pipe_log in pipeline_logs:
         match_flag = False

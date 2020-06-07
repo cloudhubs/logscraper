@@ -56,30 +56,6 @@ def search_by_offset(log_dir, offset):
             if i < len(pipe_log) -1:
                 i += 1
 
-
-    # for pipe_log in pipeline_logs:
-    #     match_flag = False
-    #     for agg_log in aggregator_logs:
-    #         if len(pipe_log) > 0 and len(agg_log) > 0:
-    #             match_flag = True
-    #             new_result = SearchResult()
-    #             new_result.offset = pipe_log.offset
-    #             new_result.consumeTime = agg_log.timestamp
-    #             new_result.sentTime = pipe_log.timestamp
-    #             new_result.consumed = False if agg_log.error else True
-    #             new_result.aggregatorMessages = agg_log.messages
-    #             new_result.pipelineMessages = pipe_log.messages
-    #             results.append(new_result.__dict__)
-    #             break
-    #
-    #     if not match_flag:
-    #         new_result = SearchResult
-    #         new_result.offset = pipe_log.offset
-    #         new_result.sentTime = pipe_log.timestamp
-    #         new_result.pipelineMessages = pipe_log.messages
-    #         new_result.consumed = False
-    #         results.append(new_result)
-
     return results
 
 

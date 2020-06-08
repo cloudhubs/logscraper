@@ -92,7 +92,6 @@ def get_pipelinelog():
         return jsonify(list)
 
 
-
 # Functionality - Return the status of results for given cluster and org id's
 # Parameters
 # dirpath: path to a directory of logs

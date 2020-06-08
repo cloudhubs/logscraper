@@ -146,4 +146,5 @@ def search_by_offset():
         abort(404)
     return jsonify(list)
 
+
 app.run()

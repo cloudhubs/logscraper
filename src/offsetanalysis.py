@@ -3,12 +3,14 @@ import os
 import aggregatorscript
 import pipelinescript
 
+
 class SearchResult:
     def __init__(self):
         self.timestamp = None
         self.status = None
         self.description = []
-        
+
+
 class SearchResult:
     def __init__(self):
         self.offset = None

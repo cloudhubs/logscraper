@@ -34,6 +34,7 @@ def home():
 <p> Example path for intended organization format "logs/aggregate" This will only parse aggregator.log for Mark </p>
 '''
 
+
 # Functionality - Parse logs from given directory
 # Parameters - path: path to logs usually thisRepositoryHome/logs
 # Return - The call to scripts will print the parsed JSON
@@ -63,7 +64,6 @@ def get_logs():
         abort(404)
     else:
         return jsonify(list)
-
 
 
 # Functionality - Parse pipeline.log only: This is an example of one file for team 3's viewing
@@ -120,7 +120,6 @@ def get_agglog():
         return jsonify(list)
 
 
-
 # Functionality - Return the status of results for given cluster and org id's
 # Parameters
 # dirpath: path to a directory of logs
@@ -174,5 +173,6 @@ def search_by_offset():
     else:
         abort(404)
     return jsonify(list)
+
 
 app.run()

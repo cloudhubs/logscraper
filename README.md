@@ -74,3 +74,48 @@ Produces messages from selected input file to Kafka topic.
    -i INPUT, --input INPUT
                          input file with messages to be produced
 ```
+
+
+### `anonymize_aggegator_log.py`
+
+Anonymize aggregator log files by hashing organization ID and cluster ID.
+This tool works as a standard Unix filter.
+
+
+#### Usage:
+
+```
+ anonymize_aggegator_log.py [-h] -s SALT
+
+ optional arguments:
+   -h, --help            show this help message and exit
+   -s SALT, --salt SALT  salt for hashing algorithm
+```
+
+### Example:
+
+```
+ anonymize_aggegator_log.py -s foobar < original.log > anonymized.log
+```
+
+
+### `anonymize_ccx_pipeline_log.py`
+
+Anonymize CCX data pipeline log files by hashing organization ID and cluster ID.
+This tool works as a standard Unix filter.
+
+#### Usage:
+
+```
+ anonymize_aggegator_log.py [-h] -s SALT < input.log > output.log
+
+ optional arguments:
+   -h, --help            show this help message and exit
+   -s SALT, --salt SALT  salt for hashing algorithm
+```
+
+### Example:
+
+```
+ anonymize_ccx_pipeline_log.py -s foobar < original.log > anonymized.log
+```

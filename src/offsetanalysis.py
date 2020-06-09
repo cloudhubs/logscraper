@@ -22,38 +22,41 @@ class SearchResult:
 
 
 def search_by_offset(log_dir, offset):
+    holder = []
     aggregator_logs = []
     pipeline_logs = []
     results = []
     for file in os.listdir(log_dir):
         full_path = os.path.join(log_dir, file)
         if fnmatch.fnmatch(full_path, '*/aggregator*.log'):
-            aggregator_logs.extend(get_results_by_offset(full_path, offset, False))
+            holder = get_results_by_offset(full_path, offset, False)
+            if holder is not None:
+                aggregator_logs.append(holder)
         elif fnmatch.fnmatch(full_path, '*/pipeline*.log'):
-            pipeline_logs.extend(get_results_by_offset(full_path, offset, True))
+            holder = get_results_by_offset(full_path, offset, True)
+            if holder is not None:
+                pipeline_logs.append(holder)
 
-    for pipe_log in pipeline_logs:
-        match_flag = False
-        for agg_log in aggregator_logs:
-            if int(pipe_log.offset) == int(agg_log.offset) and int(pipe_log.offset) == offset:
-                match_flag = True
-                new_result = SearchResult()
-                new_result.offset = pipe_log.offset
-                new_result.consumeTime = agg_log.timestamp
-                new_result.sentTime = pipe_log.timestamp
-                new_result.consumed = False if agg_log.error else True
-                new_result.aggregatorMessages = agg_log.messages
-                new_result.pipelineMessages = pipe_log.messages
-                results.append(new_result)
-                break
+    if pipeline_logs is not None and aggregator_logs is not None:
+        for pipe_log in pipeline_logs:
+            i = 0
+            for agg_log in aggregator_logs:
+                j = 0
+                if pipe_log[i].offset == agg_log[j].offset and pipe_log[i].offset == offset:
+                    new_result = SearchResult()
+                    new_result.offset = pipe_log[i].offset
+                    new_result.consumeTime = agg_log[j].timestamp
+                    new_result.sentTime = pipe_log[i].timestamp
+                    new_result.consumed = False if agg_log[j].error else True
+                    new_result.aggregatorMessages = agg_log[j].messages
+                    new_result.pipelineMessages = pipe_log[i].messages
+                    results.append(new_result.__dict__)
+                    break
+                if j < len(agg_log) -1:
+                    j += 1
 
-        if not match_flag:
-            new_result = SearchResult
-            new_result.offset = pipe_log.offset
-            new_result.sentTime = pipe_log.timestamp
-            new_result.pipelineMessages = pipe_log.messages
-            new_result.consumed = False
-            results.append(new_result)
+            if i < len(pipe_log) -1:
+                i += 1
 
     return results
 
@@ -63,13 +66,20 @@ def search_by_offset(log_dir, offset):
 # @param offset: the offset to search by
 # @return value: list of ConsumedGroups found in log file that match the given offset
 def get_results_by_offset(path_to_log, offset, pipeline=True):
+    matches = []
     if pipeline:
         groups = pipelinescript.get_log_items(path_to_log)
     else:
         groups = aggregatorscript.get_groups(path_to_log)
 
-    matches = [group for group in groups if group.offset is not None and int(group.offset) == offset]
-    return matches
+    for g in groups:
+        if g.offset == offset:
+            matches.append(g)
+
+    if len(matches) > 0:
+        return matches
+    else:
+        return
 
 
 # @param matches: list of matches from the other search methods

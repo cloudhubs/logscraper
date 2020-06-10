@@ -40,7 +40,7 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
                 if j < len(agg_log) - 1:
                     j += 1
 
-            if i < len(pipe_log) -1:
+            if i < len(pipe_log) - 1:
                 i += 1
 
     # for pipe_log in pipeline_logs:

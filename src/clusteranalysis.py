@@ -91,7 +91,6 @@ def get_results_by_org_cluster(path_to_log, organization, cluster_id, pipeline=T
         return
 
 
-
 if __name__ == "__main__":
 
     test_results = search_by_org_cluster("../logs/", 11789772, "0382553e-815b-4bc6-b452-dd129c9610c3")

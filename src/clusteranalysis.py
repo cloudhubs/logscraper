@@ -37,7 +37,7 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
                     new_result.pipelineMessages = pipe_log[i].messages
                     results.append(new_result.__dict__)
                     break
-                if j < len(agg_log) -1:
+                if j < len(agg_log) - 1:
                     j += 1
 
             if i < len(pipe_log) -1:

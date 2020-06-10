@@ -55,7 +55,7 @@ def search_by_offset(log_dir, offset):
                 if j < len(agg_log) - 1:
                     j += 1
 
-            if i < len(pipe_log) -1:
+            if i < len(pipe_log) - 1:
                 i += 1
 
     return results

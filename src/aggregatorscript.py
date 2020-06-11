@@ -277,5 +277,6 @@ if __name__ == "__main__":
 
     try:
         groups = get_groups(sys.argv[1])
+        print(len(groups))
     except Exception as e:
         print("error: ", e)

@@ -98,6 +98,7 @@ This tool works as a standard Unix filter.
  anonymize_aggegator_log.py -s foobar < original.log > anonymized.log
 ```
 
+[Annotated source code](https://cloudhubs.github.io/logscraper/anonymize_aggegator_log.html)
 
 ### `anonymize_ccx_pipeline_log.py`
 

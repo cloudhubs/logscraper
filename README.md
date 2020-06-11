@@ -76,7 +76,7 @@ Produces messages from selected input file to Kafka topic.
 ```
 
 
-### `anonymize_aggegator_log.py`
+### `anonymize_aggregator_log.py`
 
 Anonymize aggregator log files by hashing organization ID and cluster ID.
 This tool works as a standard Unix filter.
@@ -85,7 +85,7 @@ This tool works as a standard Unix filter.
 #### Usage:
 
 ```
- anonymize_aggegator_log.py [-h] -s SALT
+ anonymize_aggregator_log.py [-h] -s SALT
 
  optional arguments:
    -h, --help            show this help message and exit
@@ -95,10 +95,10 @@ This tool works as a standard Unix filter.
 ### Example:
 
 ```
- anonymize_aggegator_log.py -s foobar < original.log > anonymized.log
+ anonymize_aggregator_log.py -s foobar < original.log > anonymized.log
 ```
 
-[Annotated source code](https://cloudhubs.github.io/logscraper/anonymize_aggegator_log.html)
+[Annotated source code](https://cloudhubs.github.io/logscraper/anonymize_aggregator_log.html)
 
 ### `anonymize_ccx_pipeline_log.py`
 
@@ -108,7 +108,7 @@ This tool works as a standard Unix filter.
 #### Usage:
 
 ```
- anonymize_aggegator_log.py [-h] -s SALT < input.log > output.log
+ anonymize_ccx_pipeline_log.py [-h] -s SALT < input.log > output.log
 
  optional arguments:
    -h, --help            show this help message and exit

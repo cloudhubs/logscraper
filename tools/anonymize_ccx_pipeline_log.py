@@ -3,7 +3,7 @@
 """Anonymize CCX data pipeline log files by hashing organization ID and cluster ID."""
 
 # Usage:
-# anonymize_aggegator_log.py [-h] -s SALT < input.log > output.log
+# anonymize_ccx_pipeline_log.py [-h] -s SALT < input.log > output.log
 #
 # optional arguments:
 #   -h, --help            show this help message and exit

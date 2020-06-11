@@ -17,14 +17,14 @@
 """Anonymize aggregator log files by hashing organization ID and cluster ID."""
 
 # Usage:
-# anonymize_aggegator_log.py [-h] -s SALT < input.log > output.log
+# anonymize_aggregator_log.py [-h] -s SALT < input.log > output.log
 #
 # optional arguments:
 #   -h, --help            show this help message and exit
 #   -s SALT, --salt SALT  salt for hashing algorithm
 
 # Example:
-# anonymize_aggegator_log.py -s foobar < original.log > anonymized.log
+# anonymize_aggregator_log.py -s foobar < original.log > anonymized.log
 
 from hashlib import blake2b
 from argparse import ArgumentParser

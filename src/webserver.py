@@ -31,6 +31,7 @@ def home():
 <p> To search by cluster id and group id use "/logs/clusterorgstatus" with parameters path, clusterid, and orgid </p>
 <p> To search by offset use "/logs/offstatus" with parameters path and offset </p>
 <p> Example path for intended organization format "logs/pipeline" This will only parse pipeline.log for Mark </p>
+<p> Example path for intended organization format "logs/aggregate" This will only parse aggregator.log for Mark </p>
 '''
 
 
@@ -92,6 +93,32 @@ def get_pipelinelog():
         return jsonify(list)
 
 
+# Functionality - Parse aggregator.log only: This is an example of one file for team 3's viewing
+# Parameters - path: path to logs usually thisRepositoryHome/logs
+# Return - The call to scripts will print the parsed JSON
+@app.route('/logs/aggregate', methods=['GET'])
+def get_agglog():
+
+    dirpath = request.args.get('path', default='./logs', type=str)
+    logCount = 0
+    print(dirpath)
+    list = []
+    if os.path.exists(dirpath):
+        for file in os.listdir(dirpath):
+            if fnmatch.fnmatch(file, 'aggregator.log'):
+                list.append(file)
+                list.append(aggregatorscript.get_groups_as_json((os.path.abspath(os.path.join(dirpath, file)))))
+                logCount += 1
+    else:
+        abort(404)
+
+    # If logCount ends up being 0, then that means there was no valid log files given
+    # and therefore wrong path to logs are provided
+    if(logCount == 0):
+        abort(404)
+    else:
+        return jsonify(list)
+
 
 # Functionality - Return the status of results for given cluster and org id's
 # Parameters
@@ -146,5 +173,6 @@ def search_by_offset():
     else:
         abort(404)
     return jsonify(list)
+
 
 app.run()

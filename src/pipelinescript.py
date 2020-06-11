@@ -23,6 +23,14 @@ class LogItem:
         self.messages = []
 
 
+def plain_to_json(path):
+    """Turns file of plain text pipeline logs to a list of logs in JSON format"""
+    log_statements = []
+    for line in open(path, encoding='utf-8'):
+        split_line = line.split(" ")
+        
+
+
 # Verify if a line is in JSON format
 # @params myjson: the object to verify json form of
 # @return boolean indicating whether the object can be parsed into json

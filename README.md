@@ -120,3 +120,6 @@ This tool works as a standard Unix filter.
 ```
  anonymize_ccx_pipeline_log.py -s foobar < original.log > anonymized.log
 ```
+
+[Annotated source code](https://cloudhubs.github.io/logscraper/anonymize_ccx_pipeline_log.html)
+

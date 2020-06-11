@@ -44,8 +44,8 @@ def get_log_list(file):
 
 # @param logs: list of log records decoded from the JSON
 # @return value: list of a ConsumedGroupings, which contain the messages, timestamps, and other info for a group
-def group_consumed_logs(logs):
-    """Group logs based on the format of 'Consumed'"""
+def group_consumed_logs_old(logs):
+    """Outdated"""
     groupings = []
     processing_group = False
     current_offset = 0
@@ -109,8 +109,8 @@ def group_consumed_logs(logs):
 
 # @param logs: list of log records decoded from the JSON
 # @return value: list of a ConsumedGroupings, which contain the messages, timestamps, and other info for a group
-def group_consumed_offset_logs(logs):
-    """Group logs based on the format of 'Consumed Log Offset'"""
+def group_consumed_offset_logs_old(logs):
+    """Outdated"""
     groupings = []
     processing_group = False
     current_group = None
@@ -177,6 +177,76 @@ def group_consumed_offset_logs(logs):
     return groupings
 
 
+# @param logs: list of log records decoded from the JSON
+# @return value: list of a ConsumedGroupings, which contain the messages, timestamps, and other info for a group
+def get_consumed_groups(logs):
+    groupings = []
+    processing_group = False
+    current_group = None
+    current_offset = None
+
+    for record in logs:
+        # ensure no dirty JSON formatting
+        record['message'] = record['message'].replace("\\n", "")
+        record['message'] = record['message'].replace("\\t", "")
+
+        # make sure each JSON has an associated message
+        if 'message' not in record:
+            raise Exception("Error: log with no message")
+
+        # get cluster logs, not URI Requests
+        if record['message'].startswith("Request received - URI"):
+            # skip URI requests
+            continue
+        if not processing_group:
+            processing_group = True
+            current_offset = record['offset']
+            current_group = ConsumedGrouping()
+            current_group.offset = current_offset
+            current_group.timestamp = record['time']
+            current_group.messages.append([record['level'], record['message']])
+
+        # log is part of group, know by offset
+        elif processing_group and 'offset' in record and record['offset'] == current_offset:
+            if record['level'] != "error":
+                # get organization and cluster if not found yet
+                current_group.messages.append([record['level'], record['message']])
+                if 'organization' in record and current_group.organization is None:
+                    current_group.organization = record['organization']
+                    current_group.cluster_id = record['cluster']
+            else:
+                # add error
+                current_group.error = True
+                current_group.messages.append(["error: ", record['error']])
+                current_group.messages.append([record['level'], record['message']])
+
+        elif processing_group and 'offset' not in record:
+            # could be in group, could not be
+            if record['level'] == "error:":
+                # add error
+                current_group.error = True
+                current_group.messages.append(["error: ", record['error']])
+                current_group.messages.append([record['level'], record['message']])
+            else:
+                # regular info line
+                current_group.messages.append([record['level'], record['message']])
+        elif 'offset' in record and current_offset != record['offset']:
+            # processing a group, next offset doesn't match (new grouping)
+            processing_group = True
+            groupings.append(current_group)
+            current_group = ConsumedGrouping()
+            current_group.offset = record['offset']
+            current_offset = record['offset']
+            current_group.messages.append([record['level'], record['message']])
+            current_group.timestamp = record['time']
+
+    # add last item if needed
+    if current_group is not None:
+        groupings.append(current_group)
+
+    return groupings
+
+
 # @param log_file: pass the path to the log file to parse
 # @return value: returns a list of ConsumedGroups. One group is based on Consumed, and the other Consumed Offset
 def get_groups(log_file):
@@ -185,13 +255,9 @@ def get_groups(log_file):
     logs = get_log_list(log_file)
 
     # get log groupings for the two types
-    groups = [group_consumed_logs(logs), group_consumed_offset_logs(logs)]
+    results = get_consumed_groups(logs)
 
-    for group_category in groups:
-        if len(group_category) == 0:
-            groups.remove(group_category)
-
-    return groups[0]
+    return results
 
 
 # @param log_file: pass the path to the log file to parse
@@ -212,4 +278,4 @@ if __name__ == "__main__":
     try:
         groups = get_groups(sys.argv[1])
     except Exception as e:
-        print(e)
+        print("error: ", e)

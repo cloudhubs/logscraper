@@ -26,9 +26,33 @@ class LogItem:
 def plain_to_json(path):
     """Turns file of plain text pipeline logs to a list of logs in JSON format"""
     log_statements = []
+    next_line_check = False  # for determining whether to check for multi-line errors
+    json_dict = {}
     for line in open(path, encoding='utf-8'):
         split_line = line.split(" ")
-        
+        if next_line_check:
+            if split_line[0].startswith("2020"):
+                # end of message, continue with new log statement
+                next_line_check = False
+                log_statements.append(json_dict)
+            else:
+                json_dict['message'] += (" " + line)
+                continue
+        json_dict = {}
+        json_dict['asctime'] = split_line[0] + split_line[1]
+        json_dict['levelname'] = split_line[2]
+        json_dict['filename'] = split_line[4]
+        json_dict['message'] = ""
+        for message_text in split_line[6:]:
+            json_dict['message'] += (message_text + " ")
+
+        if json_dict['levelname'] == 'WARNING' or json_dict['levelname'] == 'ERROR':
+            next_line_check = True
+        else:
+            log_statements.append(json_dict)
+
+    return log_statements
+
 
 
 # Verify if a line is in JSON format
@@ -47,10 +71,16 @@ def is_json(myjson):
 # @return array of all the logs as json objects
 def get_log_list(pipeline_path):
     log_list = [{}]
+    plain_text = False
 
     for line in open(pipeline_path, encoding='utf-8'):
         if is_json(line):
             log_list.append(json.loads(line))
+        else:
+            plain_text = True
+            break
+    if plain_text:
+        return plain_to_json(pipeline_path)
 
     return log_list[2:]
 
@@ -190,3 +220,9 @@ def get_chunks(path):
     for h in range(len(chunks)):
         json_logs.append(chunks[h].__dict__)
     return json_logs
+
+
+if __name__ == "__main__":
+    groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
+
+    print(len(groups))

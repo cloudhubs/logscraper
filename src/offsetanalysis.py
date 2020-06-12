@@ -32,7 +32,7 @@ def search_by_offset(log_dir, offset):
     if pipeline_logs is not None and aggregator_logs is not None:
         for pipe_log in pipeline_logs:
             i = 0
-            while i < len(pipe_log) - 1:
+            while i < len(pipe_log):
                 if pipe_log[i].offset == offset:
                     new_result = SearchResult()
                     new_result.offset = pipe_log[i].offset
@@ -46,12 +46,12 @@ def search_by_offset(log_dir, offset):
                         new_result.status = "No Error Detected"
                     new_result.filetype = "Pipeline"
                     results.append(new_result.__dict__)
-                if i < len(pipe_log) -1:
+                if i < len(pipe_log):
                     i += 1
                     print(i)
         for agg_log in aggregator_logs:
             j = 0
-            while j < len(agg_log) - 1:
+            while j < len(agg_log):
                 if agg_log[j].offset == offset:
                     new_result = SearchResult()
                     new_result.offset = agg_log[j].offset
@@ -63,7 +63,7 @@ def search_by_offset(log_dir, offset):
                     else:
                         new_result.status = "No Error Detected"
                     results.append(new_result.__dict__)
-                if j < len(agg_log) -1:
+                if j < len(agg_log):
                     j += 1
     return results
 

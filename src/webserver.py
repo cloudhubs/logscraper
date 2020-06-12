@@ -101,7 +101,6 @@ def get_agglog():
 
     dirpath = request.args.get('path', default='./logs', type=str)
     logCount = 0
-    print(dirpath)
     list = []
     if os.path.exists(dirpath):
         for file in os.listdir(dirpath):
@@ -129,8 +128,8 @@ def get_agglog():
 @app.route('/logs/clusterorgstatus', methods=['GET'])
 def search_by_clusterid_orgid():
     dirpath = request.args.get('path', default='./logs', type=str)
-    cluster = request.args.get('cluster_id', default='*', type=str)
-    org = request.args.get('org_id', default='*', type=str)
+    cluster = request.args.get('cluster_id', default='92c04d4a-9f4c-441d-9df9-1e50c426df11', type=str)
+    org = request.args.get('org_id', default='11789772', type=str)
     logCount = 0
     list = []
     if os.path.exists(dirpath):
@@ -142,7 +141,7 @@ def search_by_clusterid_orgid():
         if (logCount == 0):
             abort(404)
         else:
-            list = clusteranalysis.search_by_cluster(dirpath, org, cluster)
+            list = clusteranalysis.search_by_org_cluster(dirpath, org, cluster)
     else:
         abort(404)
 
@@ -156,7 +155,7 @@ def search_by_clusterid_orgid():
 # Return - The call to scripts will print the JSON status and result
 @app.route('/logs/offstatus', methods=['GET'])
 def search_by_offset():
-    offset = request.args.get('offset', default='*', type=str)
+    offset = request.args.get('offset', default='29', type=str)
     dirpath = request.args.get('path', default='./logs', type=str)
     list = []
     logCount = 0

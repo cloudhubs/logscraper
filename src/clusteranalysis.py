@@ -32,8 +32,8 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
     if pipeline_logs is not None and aggregator_logs is not None:
         for pipe_log in pipeline_logs:
             i = 0
-            while i < len(pipe_log) - 1:
-                if pipe_log[i].organization == organization and pipe_log[i].cluster_id == cluster_id:
+            while i < len(pipe_log):
+                if pipe_log[i].organization == int(organization) and pipe_log[i].cluster_id == cluster_id:
                     new_result = SearchResult()
                     new_result.clusterid = pipe_log[i].cluster_id
                     new_result.orgid = pipe_log[i].organization
@@ -47,13 +47,12 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
                         new_result.status = "No Error Detected"
                     new_result.filetype = "Pipeline"
                     results.append(new_result.__dict__)
-                if i < len(pipe_log) -1:
+                if i < len(pipe_log):
                     i += 1
-                    print(i)
         for agg_log in aggregator_logs:
             j = 0
-            while j < len(agg_log) - 1:
-                if agg_log[j].organization == organization and agg_log[j].cluster_id == cluster_id:
+            while j < len(agg_log):
+                if agg_log[j].organization == int(organization) and agg_log[j].cluster_id == cluster_id:
                     new_result = SearchResult()
                     new_result.clusterid = agg_log[j].cluster_id
                     new_result.orgid = agg_log[j].organization
@@ -65,7 +64,7 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
                     else:
                         new_result.status = "No Error Detected"
                     results.append(new_result.__dict__)
-                if j < len(agg_log) -1:
+                if j < len(agg_log):
                     j += 1
     return results
 
@@ -81,8 +80,9 @@ def get_results_by_org_cluster(path_to_log, organization, cluster_id, pipeline=T
         groups = aggregatorscript.get_groups(path_to_log)
 
     for g in groups:
-        if g.organization == organization and g.cluster_id == cluster_id:
+        if g.cluster_id == cluster_id:
             matches.append(g)
+
 
     if len(matches) > 0:
         return matches

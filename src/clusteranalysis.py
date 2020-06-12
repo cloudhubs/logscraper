@@ -2,8 +2,15 @@ import fnmatch
 import os
 import aggregatorscript
 import pipelinescript
-from offsetanalysis import SearchResult
 
+class SearchResult:
+    def __init__(self):
+        self.clusterid = None
+        self.orgid = None
+        self.timestamp = None
+        self.status = None
+        self.description = []
+        self.filetype = None
 
 def search_by_org_cluster(log_dir, organization, cluster_id):
     aggregator_logs = []
@@ -21,54 +28,47 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
             if holder is not None:
                 pipeline_logs.append(holder)
 
+
     if pipeline_logs is not None and aggregator_logs is not None:
         for pipe_log in pipeline_logs:
             i = 0
-            for agg_log in aggregator_logs:
-                j = 0
-                if pipe_log[i].organization == agg_log[j].organization and pipe_log[i].cluster_id == agg_log[j].cluster_id and\
-                        pipe_log[i].organization == organization and pipe_log[i].cluster_id == cluster_id:
+            while i < len(pipe_log):
+                if pipe_log[i].organization == int(organization) and pipe_log[i].cluster_id == cluster_id:
                     new_result = SearchResult()
-                    new_result.offset = pipe_log[i].offset
-                    new_result.consumeTime = agg_log[j].timestamp
-                    new_result.sentTime = pipe_log[i].timestamp
-                    new_result.consumed = False if agg_log[j].error else True
-                    new_result.aggregatorMessages = agg_log[j].messages
-                    new_result.pipelineMessages = pipe_log[i].messages
+                    new_result.clusterid = pipe_log[i].cluster_id
+                    new_result.orgid = pipe_log[i].organization
+                    new_result.timestamp = pipe_log[i].timestamp
+                    new_result.description = pipe_log[i].messages
+                    if pipe_log[i].warning is True:
+                        new_result.status = "Warning"
+                    elif pipe_log[i].error is True:
+                        new_result.status = "Error"
+                    else:
+                        new_result.status = "No Error Detected"
+                    new_result.filetype = "Pipeline"
                     results.append(new_result.__dict__)
-                    break
-                if j < len(agg_log) - 1:
+                if i < len(pipe_log):
+                    i += 1
+        for agg_log in aggregator_logs:
+            j = 0
+            while j < len(agg_log):
+                if agg_log[j].organization == int(organization) and agg_log[j].cluster_id == cluster_id:
+                    new_result = SearchResult()
+                    new_result.clusterid = agg_log[j].cluster_id
+                    new_result.orgid = agg_log[j].organization
+                    new_result.timestamp = agg_log[j].timestamp
+                    new_result.description = agg_log[j].messages
+                    new_result.filetype = "Aggregate"
+                    if agg_log[j].error is True:
+                        new_result.status = "Error"
+                    else:
+                        new_result.status = "No Error Detected"
+                    results.append(new_result.__dict__)
+
+                if j < len(agg_log):
                     j += 1
 
-            if i < len(pipe_log) - 1:
-                i += 1
-
-    # for pipe_log in pipeline_logs:
-    #     match_flag = False
-    #     for agg_log in aggregator_logs:
-    #         if (int(pipe_log.organization) == int(agg_log.organization) and int(pipe_log.organization) == organization)\
-    #                 and (pipe_log.cluster_id == agg_log.cluster_id and pipe_log.cluster_id == cluster_id):
-    #             match_flag = True
-    #             new_result = SearchResult()
-    #             new_result.offset = pipe_log.offset
-    #             new_result.consumeTime = agg_log.timestamp
-    #             new_result.sentTime = pipe_log.timestamp
-    #             new_result.consumed = False if agg_log.error else True
-    #             new_result.aggregatorMessages = agg_log.messages
-    #             new_result.pipelineMessages = pipe_log.messages
-    #             results.append(new_result)
-    #             break
-    #
-    #     if not match_flag:
-    #         new_result = SearchResult
-    #         new_result.offset = pipe_log.offset
-    #         new_result.sentTime = pipe_log.timestamp
-    #         new_result.pipelineMessages = pipe_log.messages
-    #         new_result.consumed = False
-    #         results.append(new_result)
-
     return results
-
 
 # @param path_to_log: log file to read the logs from
 # @param organization: the organization id to search by
@@ -82,8 +82,9 @@ def get_results_by_org_cluster(path_to_log, organization, cluster_id, pipeline=T
         groups = aggregatorscript.get_groups(path_to_log)
 
     for g in groups:
-        if g.organization == organization and g.cluster_id == cluster_id:
+        if g.cluster_id == cluster_id:
             matches.append(g)
+
 
     if len(matches) > 0:
         return matches

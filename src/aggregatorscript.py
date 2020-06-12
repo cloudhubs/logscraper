@@ -170,7 +170,6 @@ def group_consumed_offset_logs(logs):
                     current_group.messages.append([record['level'], record['message']])
                     local_record_index += 1
 
-
     # add last group to groupings
     if current_group is not None:
         groupings.append(current_group)

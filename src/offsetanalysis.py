@@ -3,6 +3,7 @@ import os
 import aggregatorscript
 import pipelinescript
 
+
 class SearchResult:
     def __init__(self):
         self.offset = None
@@ -10,7 +11,6 @@ class SearchResult:
         self.status = None
         self.description = []
         self.filetype = None
-
 
 def search_by_offset(log_dir, offset):
     holder = []

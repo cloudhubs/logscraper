@@ -35,4 +35,12 @@ Source codes of this service are available at <https://github.com/RedHatInsights
 
 ### Whole data flow based on CCX Data Pipeline and Insights Results Aggregator
 
-The whole data flow is described there <https://redhatinsights.github.io/insights-results-aggregator/architecture.html#whole-data-flow>
+The whole data flow is [described there](Pipeline.md)
+
+![data_flow](Pipeline.png "Data flow")
+
+
+### Documentation for Transformation of Log Files to JSON
+
+Two examples for aggregator logs and one for pipeline logs are given: <https://github.com/cloudhubs/logscraper/blob/master/docs/Transformations.md>
+

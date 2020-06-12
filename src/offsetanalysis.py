@@ -5,22 +5,14 @@ import sys
 import aggregatorscript
 import pipelinescript
 
-"""
-class SearchResult:
-    def __init__(self):
-        self.timestamp = None
-        self.status = None
-        self.description = []
-"""
 
 class SearchResult:
     def __init__(self):
         self.offset = None
-        self.consumedTime = None
-        self.sentTime = None
-        self.consumed = False  # True if it was consumed, false if failed
-        self.pipelineMessages = []
-        self.aggregatorMessages = []
+        self.timestamp = None
+        self.status = None
+        self.description = []
+        self.filetype = None
 
 
 def search_by_offset(log_dir, offset):
@@ -42,23 +34,40 @@ def search_by_offset(log_dir, offset):
     if pipeline_logs is not None and aggregator_logs is not None:
         for pipe_log in pipeline_logs:
             i = 0
-            for agg_log in aggregator_logs:
-                j = 0
-                if pipe_log[i].offset == agg_log[j].offset and pipe_log[i].offset == offset:
+            while i < len(pipe_log):
+                if pipe_log[i].offset == offset:
                     new_result = SearchResult()
                     new_result.offset = pipe_log[i].offset
-                    new_result.consumeTime = agg_log[j].timestamp
-                    new_result.sentTime = pipe_log[i].timestamp
-                    new_result.consumed = False if agg_log[j].error else True
-                    new_result.aggregatorMessages = agg_log[j].messages
-                    new_result.pipelineMessages = pipe_log[i].messages
+                    new_result.timestamp = pipe_log[i].timestamp
+                    new_result.description = pipe_log[i].messages
+                    if pipe_log[i].warning is True:
+                        new_result.status = "Warning"
+                    elif pipe_log[i].error is True:
+                        new_result.status = "Error"
+                    else:
+                        new_result.status = "No Error Detected"
+                    new_result.filetype = "Pipeline"
                     results.append(new_result.__dict__)
-                    break
-                if j < len(agg_log) - 1:
-                    j += 1
+                if i < len(pipe_log):
+                    i += 1
+                    print(i)
+        for agg_log in aggregator_logs:
+            j = 0
+            while j < len(agg_log):
+                if agg_log[j].offset == offset:
+                    new_result = SearchResult()
+                    new_result.offset = agg_log[j].offset
+                    new_result.timestamp = agg_log[j].timestamp
+                    new_result.description = agg_log[j].messages
+                    new_result.filetype = "Aggregate"
+                    if agg_log[j].error is True:
+                        new_result.status = "Error"
+                    else:
+                        new_result.status = "No Error Detected"
+                    results.append(new_result.__dict__)
 
-            if i < len(pipe_log) - 1:
-                i += 1
+                if j < len(agg_log):
+                    j += 1
 
     return results
 

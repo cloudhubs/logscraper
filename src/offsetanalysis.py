@@ -1,5 +1,7 @@
 import fnmatch
 import os
+import sys
+
 import aggregatorscript
 import pipelinescript
 
@@ -12,6 +14,7 @@ class SearchResult:
         self.description = []
         self.filetype = None
 
+
 def search_by_offset(log_dir, offset):
     holder = []
     aggregator_logs = []
@@ -23,11 +26,10 @@ def search_by_offset(log_dir, offset):
             holder = get_results_by_offset(full_path, offset, False)
             if holder is not None:
                 aggregator_logs.append(holder)
-        elif fnmatch.fnmatch(full_path, '*/pipeline*.log'):
+        elif fnmatch.fnmatch(full_path, '*/*pipeline*.log'):
             holder = get_results_by_offset(full_path, offset, True)
             if holder is not None:
                 pipeline_logs.append(holder)
-
 
     if pipeline_logs is not None and aggregator_logs is not None:
         for pipe_log in pipeline_logs:
@@ -109,5 +111,5 @@ def get_offset_search_objects(matches: list):
 
 
 if __name__ == "__main__":
-    test_results = search_by_offset("../logs/", 28)
-    print(test_results[0])
+    test_results = search_by_offset(sys.argv[1], 5045232)
+    print(test_results)

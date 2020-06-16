@@ -177,5 +177,7 @@ def search_by_offset():
         abort(404)
     return jsonify(list)
 
+if __name__ == "__main__":
+    app.run()
 
-app.run()
+

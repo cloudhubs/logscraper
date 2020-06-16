@@ -63,8 +63,10 @@ def search_by_offset(log_dir, offset):
                     else:
                         new_result.status = "No Error Detected"
                     results.append(new_result.__dict__)
+
                 if j < len(agg_log):
                     j += 1
+
     return results
 
 

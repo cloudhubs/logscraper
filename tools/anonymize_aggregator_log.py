@@ -1,19 +1,34 @@
 #!/usr/bin/env python3
 
-"""Anonymize CCX data pipeline log files by hashing organization ID and cluster ID."""
+# Copyright © 2020 Pavel Tisnovsky
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Anonymize aggregator log files by hashing organization ID and cluster ID."""
 
 # Usage:
-# anonymize_ccx_pipeline_log.py [-h] -s SALT < input.log > output.log
+# anonymize_aggregator_log.py [-h] -s SALT < input.log > output.log
 #
 # optional arguments:
 #   -h, --help            show this help message and exit
 #   -s SALT, --salt SALT  salt for hashing algorithm
 
+# Example:
+# anonymize_aggregator_log.py -s foobar < original.log > anonymized.log
 
 from hashlib import blake2b
 from argparse import ArgumentParser
 from sys import stdin
-from re import sub, match
 
 
 def split_by_two_strings(line, str1, str2):
@@ -33,8 +48,8 @@ def hash_org_id(line, salt):
     """Hash organization ID and return new line with encrypted value."""
     # First we need to retrieve the organization ID from input line.
     beginning, org_id, ending = split_by_two_strings(line,
-                                                     'Message context: OrgId=',
-                                                     ', ClusterName="')
+                                                     '"organization":',
+                                                     ',"cluster":"')
 
     # Initialize hashing algorithm. Hash to 8 bytes might be enough for
     # organization ID (`long int` originally).
@@ -55,8 +70,8 @@ def hash_cluster_id(line, salt):
     """Hash cluster ID and return new line with encrypted value."""
     # First we need to retrieve the cluster ID from input line.
     beginning, cluster_id, ending = split_by_two_strings(line,
-                                                         ' ClusterName="',
-                                                         '", LastChecked="')
+                                                         '"cluster":"',
+                                                         '","time":"')
 
     # Initialize hashing algorithm. Hash to 16 bytes is enough for
     # cluster ID (32 hexa characters).
@@ -76,33 +91,6 @@ def hash_cluster_id(line, salt):
 def hash_sensitive_values(line, salt=b'foo'):
     """Hash all sensitive values on line."""
     return hash_cluster_id(hash_org_id(line, salt), salt)
-
-
-def hash_url(line, salt=b'foo'):
-    """Change URL part from log line (not relevant anyway)."""
-    # Retrieve the URL part from log line
-    url = match(r'.* (https://\S+)', line).groups()[0]
-
-    # Initialize hashing algorithm. Hash to 32 bytes is enough for
-    # unique URL
-    h = blake2b(digest_size=32, salt=salt)
-
-    # Convert string with URL to bytes and perform the hashing.
-    h.update(url.encode('utf-8'))
-
-    # Now it is possible to retrieve the hash in hex format.
-    x = h.hexdigest()
-
-    # And use the hash instead of original URL.
-    return sub(r'https://\S+', "https://example.com/" + x, line)
-
-
-def anonymize_payload_hash(line):
-    """Change payload hash (not relevant anyway)."""
-    # Payload Tracker uses an unique string which is 32 characters long
-    # and contains only alphanumeric characters. It is easy to replace such
-    # string with its anonymized version (it has no meaning for log processing).
-    return sub(r'[a-z0-9]{32}', '{anonymized}', line)
 
 
 def main():
@@ -127,12 +115,8 @@ def main():
         line = line.strip()
         # If the line contains any information that need to be anonymized,
         # do so.
-        if 'Message context: OrgId=' in line and ', ClusterName="' in line:
+        if '"organization":' in line and '"cluster":"' in line:
             line = hash_sensitive_values(line, salt=salt)
-        if "https://" in line:
-            line = hash_url(line, salt=salt)
-        if "Payload Tracker update successfully sent:" in line:
-            line = anonymize_payload_hash(line)
         print(line)
 
 

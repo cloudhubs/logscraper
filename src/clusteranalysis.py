@@ -64,8 +64,10 @@ def search_by_org_cluster(log_dir, organization, cluster_id):
                     else:
                         new_result.status = "No Error Detected"
                     results.append(new_result.__dict__)
+
                 if j < len(agg_log):
                     j += 1
+
     return results
 
 # @param path_to_log: log file to read the logs from
@@ -88,7 +90,6 @@ def get_results_by_org_cluster(path_to_log, organization, cluster_id, pipeline=T
         return matches
     else:
         return
-
 
 
 if __name__ == "__main__":

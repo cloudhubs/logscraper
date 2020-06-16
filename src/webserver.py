@@ -149,6 +149,8 @@ def search_by_clusterid_orgid():
 
 
 # Functionality - Return the status of results for given offset
+# The results are all information matching that offset in any of
+# the files in the given directory.
 # Parameters
 # dirpath: path to a directory of logs
 # offset: The given offset to search for

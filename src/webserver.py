@@ -120,6 +120,8 @@ def get_agglog():
 
 
 # Functionality - Return the status of results for given cluster and org id's
+# The results are all information matching both the cluster and org id in any of
+# the files in the given directory.
 # Parameters
 # dirpath: path to a directory of logs
 # cluster: The given cluster id to search for

@@ -228,5 +228,5 @@ def get_chunks(path):
 
 
 if __name__ == "__main__":
-    groups = get_chunks("../logs/pipeline.log")
+    groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
     print(len(groups))

@@ -22,7 +22,9 @@ class LogItem:
         self.warning = False
         self.messages = []
 
-
+# Convert anonymized pipeline logs to compatible JSON format
+# @params path is the path to the pipeline log file
+# @return a list of logs in a compatible JSON format
 def plain_to_json(path):
     """Turns file of plain text pipeline logs to a list of logs in JSON format"""
     log_statements = []

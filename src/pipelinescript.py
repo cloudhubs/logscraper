@@ -75,12 +75,14 @@ def get_log_list(pipeline_path):
     log_list = [{}]
     plain_text = False
 
+    # Determine if only the first line of the file was not json
     index = 0
     for line in open(pipeline_path, encoding='utf-8'):
         if is_json(line):
             log_list.append(json.loads(line))
             index = 1
         else:
+            # If more than one line is not json, then it is anonymized
             if index > 0:
                 plain_text = True
                 break

@@ -11,7 +11,6 @@ from flask import request
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-
 class LogItem:
     orgId = -1
     clusterName = ""
@@ -22,7 +21,7 @@ class LogItem:
     isWarning = False
     messages = []
 
-
+# This is the homepage which will display all recommend paths and give instructions
 @app.route('/', methods=['GET'])
 def home():
     return '''<h1><center>Log Scraper Server</center></h1>

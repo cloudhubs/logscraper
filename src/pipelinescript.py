@@ -89,7 +89,7 @@ def get_log_list(pipeline_path):
 # @params pipeline_path: the path to the pipeline log
 # @return an array of LogItem objects as JSON objects
 def get_log_items(pipeline_path):
-    logItems = []
+    log_items = []
     logs = get_log_list(pipeline_path)
     is_error = False
     is_warning = False
@@ -119,7 +119,7 @@ def get_log_items(pipeline_path):
                 item.warning = is_warning
                 item.partition = partition
                 item.offset = offset
-                logItems.append(item)
+                log_items.append(item)
                 del item
                 is_error = False
                 is_warning = False
@@ -163,12 +163,14 @@ def get_log_items(pipeline_path):
         item.warning = is_warning
         item.partition = partition
         item.offset = offset
-        logItems.append(item)
+        log_items.append(item)
         del item
         is_error = False
         is_warning = False
         partition = -1
         offset = -1
+
+    return log_items
 
 """
     # Loop through each line of the logs and grab desired information
@@ -299,7 +301,4 @@ def get_chunks(path):
 
 if __name__ == "__main__":
     groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
-
-    for thing in groups:
-        print(thing['cluster_id'], thing['messages'])
     print(len(groups))

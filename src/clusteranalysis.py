@@ -16,7 +16,14 @@ class SearchResult:
         self.description = []
         self.filetype = None
 
-
+# Functionality - Return the status of results for given cluster and org id's
+# The results are all information matching both the cluster and org id in any of
+# the files in the given directory.
+# Parameters
+# log_dir: path to a directory of logs
+# cluster_id: The given cluster id to search for
+# organization: The given org id to search for
+# Return - Return all information relating to the organization and cluster_id given
 
 def search_by_org_cluster(log_dir, organization, cluster_id):
     aggregator_logs = []

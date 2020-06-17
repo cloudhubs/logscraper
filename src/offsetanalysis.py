@@ -4,6 +4,9 @@ import aggregatorscript
 import pipelinescript
 
 
+# This script will return the resulting offsets found in a given directory of logs
+# All results found in either the pipeline or aggregate logs will be returned to the caller
+
 class SearchResult:
     def __init__(self):
         self.offset = None

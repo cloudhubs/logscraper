@@ -208,7 +208,6 @@ def get_chunks(path):
     for i in range(1, len(log_items)):
         # If the offsets match, combine the two log items
         if chunks[index].offset == log_items[i].offset:
-            temp_cluster
             if len(log_items[i].cluster_id) > 0:
                 chunks[index].cluster_id.append(log_items[i].cluster_id)
 
@@ -232,6 +231,8 @@ def get_chunks(path):
     return json_logs
 
 
+"""
 if __name__ == "__main__":
     groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
     print(groups[1])
+"""

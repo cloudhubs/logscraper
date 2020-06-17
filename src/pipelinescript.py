@@ -96,6 +96,81 @@ def get_log_items(pipeline_path):
     msg_arr = []
     partition = -1
     offset = -1
+
+    for i in range(len(logs)):
+        if "Offset" in logs[i]['message'] or "Partition" in logs[i]['message']:
+            if len(msg_arr) > 1:
+                item = LogItem()
+                # Check for orgId and clusterName
+                if "OrgId" in logs[i - 1]['message'] or "ClusterName" in logs[i - 1]['message']:
+                    message = logs[i - 1]['message'].split(',')
+                    for h in range(len(message)):
+                        if "OrgId" in message[h]:
+                            item.organization = int(message[h][message[h].find("=") + 1:])
+                        elif "ClusterName" in message[h]:
+                            item.cluster_id = message[h][message[h].find("=") + 2:-1]
+                # Assign message array and error/warning members
+                item.messages = [None] * len(msg_arr)
+                for j in range(len(msg_arr)):
+                    item.messages[j] = msg_arr[j]
+
+                item.timestamp = logs[i - 1]['asctime']
+                item.error = is_error
+                item.warning = is_warning
+                item.partition = partition
+                item.offset = offset
+                logItems.append(item)
+                del item
+                is_error = False
+                is_warning = False
+                partition = -1
+                offset = -1
+            del msg_arr[:]
+
+            msg_arr.append(logs[i]['message'])
+            if "Partition" in msg_arr[0] or "Offset" in msg_arr[0]:
+                message = msg_arr[0].split(';')
+                for k in range(len(message)):
+                    if "Partition" in message[k]:
+                        partition = int(message[k][12:])
+                    elif "Offset" in message[k]:
+                        offset = message[k][9:]
+
+        else:
+            if "ERROR" in logs[i]['levelname']:
+                is_error = True
+            elif "WARNING" in logs[i]['levelname']:
+                is_warning = True
+        msg_arr.append(logs[i]['message'])
+
+    if len(msg_arr) > 1:
+        item = LogItem()
+        # Check for orgId and clusterName
+        if "OrgId" in logs[i - 1]['message'] or "ClusterName" in logs[i - 1]['message']:
+            message = logs[i - 1]['message'].split(',')
+            for h in range(len(message)):
+                if "OrgId" in message[h]:
+                    item.organization = int(message[h][message[h].find("=") + 1:])
+                elif "ClusterName" in message[h]:
+                    item.cluster_id = message[h][message[h].find("=") + 2:-1]
+        # Assign message array and error/warning members
+        item.messages = [None] * len(msg_arr)
+        for j in range(len(msg_arr)):
+            item.messages[j] = msg_arr[j]
+
+        item.timestamp = logs[i - 1]['asctime']
+        item.error = is_error
+        item.warning = is_warning
+        item.partition = partition
+        item.offset = offset
+        logItems.append(item)
+        del item
+        is_error = False
+        is_warning = False
+        partition = -1
+        offset = -1
+
+"""
     # Loop through each line of the logs and grab desired information
     for i in range(len(logs)):
         # Beginning of a chunk of data, so save its message
@@ -176,7 +251,7 @@ def get_log_items(pipeline_path):
         del msg_arr[:]
         del item
     return logItems
-
+"""
 
 # Gets the key for a sorting algorithm
 # @params the LogItem to return the offset from
@@ -225,4 +300,6 @@ def get_chunks(path):
 if __name__ == "__main__":
     groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
 
+    for thing in groups:
+        print(thing['cluster_id'], thing['messages'])
     print(len(groups))

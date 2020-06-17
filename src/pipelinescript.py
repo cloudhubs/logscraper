@@ -73,12 +73,19 @@ def get_log_list(pipeline_path):
     log_list = [{}]
     plain_text = False
 
+    index = 0
     for line in open(pipeline_path, encoding='utf-8'):
         if is_json(line):
             log_list.append(json.loads(line))
+            index = 1
         else:
-            plain_text = True
+            if index > 0:
+                plain_text = True
+                break
+            index = 1
+        if plain_text:
             break
+
     if plain_text:
         return plain_to_json(pipeline_path)
 
@@ -131,10 +138,11 @@ def get_log_items(pipeline_path):
             if "Partition" in msg_arr[0] or "Offset" in msg_arr[0]:
                 message = msg_arr[0].split(';')
                 for k in range(len(message)):
-                    if "Partition" in message[k]:
+                    if "Partition:" in message[k]:
                         partition = int(message[k][12:])
-                    elif "Offset" in message[k]:
+                    elif "Offset:" in message[k]:
                         offset = message[k][9:]
+                        print(offset)
 
         else:
             if "ERROR" in logs[i]['levelname']:
@@ -300,5 +308,8 @@ def get_chunks(path):
 
 
 if __name__ == "__main__":
-    groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
+    groups = get_chunks("../logs/pipeline.log")
     print(len(groups))
+
+    for thing in groups:
+        print(thing['offset'],thing['cluster_id'], thing['messages'])

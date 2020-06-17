@@ -15,6 +15,15 @@ class SearchResult:
         self.description = []
         self.filetype = None
 
+
+# Functionality - Return the status of results for given offset
+# The results are all information matching that offset in any of
+# the files in the given directory.
+# Parameters
+# log_dir: path to a directory of logs
+# offset: The given offset to search for
+# Return - The call to scripts will return all information relating to the offset given
+
 def search_by_offset(log_dir, offset):
     holder = []
     aggregator_logs = []

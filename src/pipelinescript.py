@@ -99,6 +99,7 @@ def get_log_list(pipeline_path):
 # @return an array of LogItem objects as JSON objects
 def get_log_items(pipeline_path):
     log_items = []
+    # Returns a list of logs from either file type
     logs = get_log_list(pipeline_path)
     is_error = False
     is_warning = False
@@ -107,6 +108,7 @@ def get_log_items(pipeline_path):
     offset = -1
 
     for i in range(len(logs)):
+        # Beginning of the log chunk
         if "Offset" in logs[i]['message'] or "Partition" in logs[i]['message']:
             if len(msg_arr) > 1:
                 item = LogItem()

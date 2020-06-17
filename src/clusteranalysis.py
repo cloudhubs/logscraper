@@ -8,6 +8,7 @@ import pipelinescript
 # This script will return the resulting cluster and org id's found in a given directory of logs
 # All results found in either the pipeline or aggregate logs will be returned to the caller
 
+
 class SearchResult:
     def __init__(self):
         self.clusterid = None
@@ -16,6 +17,8 @@ class SearchResult:
         self.status = None
         self.description = []
         self.filetype = None
+
+
 
 def search_by_org_cluster(log_dir, organization, cluster_id):
     aggregator_logs = []

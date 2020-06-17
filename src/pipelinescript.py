@@ -22,6 +22,7 @@ class LogItem:
         self.warning = False
         self.messages = []
 
+
 # Convert anonymized pipeline logs to compatible JSON format
 # @params path is the path to the pipeline log file
 # @return a list of logs in a compatible JSON format
@@ -54,7 +55,6 @@ def plain_to_json(path):
             log_statements.append(json_dict)
 
     return log_statements
-
 
 
 # Verify if a line is in JSON format
@@ -181,6 +181,7 @@ def get_log_items(pipeline_path):
         offset = -1
 
     return log_items
+
 
 # Gets the key for a sorting algorithm
 # @params the LogItem to return the offset from

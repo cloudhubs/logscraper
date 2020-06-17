@@ -148,7 +148,6 @@ def get_log_items(pipeline_path):
                         partition = int(message[k][12:])
                     elif "Offset:" in message[k]:
                         offset = message[k][9:]
-                        print(offset)
 
         else:
             if "ERROR" in logs[i]['levelname']:
@@ -235,4 +234,4 @@ def get_chunks(path):
 
 if __name__ == "__main__":
     groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
-    print(len(groups))
+    print(groups[1])

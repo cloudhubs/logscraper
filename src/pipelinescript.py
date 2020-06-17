@@ -310,6 +310,3 @@ def get_chunks(path):
 if __name__ == "__main__":
     groups = get_chunks("../logs/pipeline.log")
     print(len(groups))
-
-    for thing in groups:
-        print(thing['offset'],thing['cluster_id'], thing['messages'])

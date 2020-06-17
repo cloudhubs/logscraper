@@ -203,6 +203,7 @@ def get_chunks(path):
     index = 0
     # Iterates through each LogItem and creates chunks based on matching offsets
     for i in range(1, len(log_items)):
+        # If the offsets match, combine the two log items
         if chunks[index].offset == log_items[i].offset:
             temp_cluster
             if len(log_items[i].cluster_id) > 0:
@@ -215,6 +216,7 @@ def get_chunks(path):
                 chunks[index].error = True
             if log_items[i].warning:
                 chunks[index].warning = True
+        # Add the log item to the list since it had no duplicates
         else:
             index += 1
             chunks.append(log_items[i])

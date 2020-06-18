@@ -23,6 +23,9 @@ class LogItem:
         self.messages = []
 
 
+# Convert anonymized pipeline logs to compatible JSON format
+# @params path is the path to the pipeline log file
+# @return a list of logs in a compatible JSON format
 def plain_to_json(path):
     """Turns file of plain text pipeline logs to a list of logs in JSON format"""
     log_statements = []
@@ -54,7 +57,6 @@ def plain_to_json(path):
     return log_statements
 
 
-
 # Verify if a line is in JSON format
 # @params myjson: the object to verify json form of
 # @return boolean indicating whether the object can be parsed into json
@@ -73,12 +75,21 @@ def get_log_list(pipeline_path):
     log_list = [{}]
     plain_text = False
 
+    # Determine if only the first line of the file was not json
+    index = 0
     for line in open(pipeline_path, encoding='utf-8'):
         if is_json(line):
             log_list.append(json.loads(line))
+            index = 1
         else:
-            plain_text = True
+            # If more than one line is not json, then it is anonymized
+            if index > 0:
+                plain_text = True
+                break
+            index = 1
+        if plain_text:
             break
+
     if plain_text:
         return plain_to_json(pipeline_path)
 
@@ -89,18 +100,18 @@ def get_log_list(pipeline_path):
 # @params pipeline_path: the path to the pipeline log
 # @return an array of LogItem objects as JSON objects
 def get_log_items(pipeline_path):
-    logItems = []
+    log_items = []
+    # Returns a list of logs from either file type
     logs = get_log_list(pipeline_path)
     is_error = False
     is_warning = False
     msg_arr = []
     partition = -1
     offset = -1
-    # Loop through each line of the logs and grab desired information
+
     for i in range(len(logs)):
-        # Beginning of a chunk of data, so save its message
-        if logs[i]['levelname'] == "INFO":
-            # If the previous block had messages associated with it
+        # Beginning of the log chunk
+        if "Offset" in logs[i]['message'] or "Partition" in logs[i]['message']:
             if len(msg_arr) > 1:
                 item = LogItem()
                 # Check for orgId and clusterName
@@ -111,32 +122,33 @@ def get_log_items(pipeline_path):
                             item.organization = int(message[h][message[h].find("=") + 1:])
                         elif "ClusterName" in message[h]:
                             item.cluster_id = message[h][message[h].find("=") + 2:-1]
-
-                # check for partition and offset
-                if "Partition" in msg_arr[0] or "Offset" in msg_arr[0]:
-                    message = msg_arr[0].split(';')
-                    for k in range(len(message)):
-                        if "Partition" in message[k]:
-                            partition = int(message[k][12:])
-                        elif "Offset" in message[k]:
-                            offset = message[k][9:]
-                item.partition = partition
-                item.offset = offset
-
                 # Assign message array and error/warning members
                 item.messages = [None] * len(msg_arr)
                 for j in range(len(msg_arr)):
                     item.messages[j] = msg_arr[j]
+
+                item.timestamp = logs[i - 1]['asctime']
                 item.error = is_error
                 item.warning = is_warning
-                item.timestamp = logs[i - 1]['asctime']
-                logItems.append(item)
+                item.partition = partition
+                item.offset = offset
+                log_items.append(item)
                 del item
                 is_error = False
                 is_warning = False
                 partition = -1
                 offset = -1
             del msg_arr[:]
+
+            msg_arr.append(logs[i]['message'])
+            if "Partition" in msg_arr[0] or "Offset" in msg_arr[0]:
+                message = msg_arr[0].split(';')
+                for k in range(len(message)):
+                    if "Partition:" in message[k]:
+                        partition = int(message[k][12:])
+                    elif "Offset:" in message[k]:
+                        offset = message[k][9:]
+
         else:
             if "ERROR" in logs[i]['levelname']:
                 is_error = True
@@ -144,38 +156,34 @@ def get_log_items(pipeline_path):
                 is_warning = True
         msg_arr.append(logs[i]['message'])
 
-    # Append final log item
     if len(msg_arr) > 1:
         item = LogItem()
         # Check for orgId and clusterName
-        if "OrgId" in logs[len(logs) - 1]['message'] or "ClusterName" in logs[len(logs) - 1]['message']:
-            message = logs[len(logs) - 1]['message'].split(',')
+        if "OrgId" in logs[i - 1]['message'] or "ClusterName" in logs[i - 1]['message']:
+            message = logs[i - 1]['message'].split(',')
             for h in range(len(message)):
-                if "OrgId" in message[i]:
+                if "OrgId" in message[h]:
                     item.organization = int(message[h][message[h].find("=") + 1:])
                 elif "ClusterName" in message[h]:
                     item.cluster_id = message[h][message[h].find("=") + 2:-1]
-        # check for partition and offset
-        if "Partition" in msg_arr[0] or "Offset" in msg_arr[0]:
-            message = msg_arr[0].split(';')
-            print(message)
-            for j in range(len(message)):
-                if "Partition" in message[j]:
-                    item.partition = int(message[j][11:])
-                elif "Offset" in message[i]:
-                    item.offset = message[j][9:]
-
         # Assign message array and error/warning members
         item.messages = [None] * len(msg_arr)
-        for i in range(len(msg_arr)):
-            item.messages[i] = msg_arr[i]
+        for j in range(len(msg_arr)):
+            item.messages[j] = msg_arr[j]
+
+        item.timestamp = logs[i - 1]['asctime']
         item.error = is_error
         item.warning = is_warning
-        item.timestamp = logs[i - 1]['asctime']
-        logItems.append(item)
-        del msg_arr[:]
+        item.partition = partition
+        item.offset = offset
+        log_items.append(item)
         del item
-    return logItems
+        is_error = False
+        is_warning = False
+        partition = -1
+        offset = -1
+
+    return log_items
 
 
 # Gets the key for a sorting algorithm
@@ -198,8 +206,8 @@ def get_chunks(path):
     index = 0
     # Iterates through each LogItem and creates chunks based on matching offsets
     for i in range(1, len(log_items)):
+        # If the offsets match, combine the two log items
         if chunks[index].offset == log_items[i].offset:
-            temp_cluster
             if len(log_items[i].cluster_id) > 0:
                 chunks[index].cluster_id.append(log_items[i].cluster_id)
 
@@ -210,6 +218,7 @@ def get_chunks(path):
                 chunks[index].error = True
             if log_items[i].warning:
                 chunks[index].warning = True
+        # Add the log item to the list since it had no duplicates
         else:
             index += 1
             chunks.append(log_items[i])
@@ -222,7 +231,8 @@ def get_chunks(path):
     return json_logs
 
 
+"""
 if __name__ == "__main__":
     groups = get_chunks("../logs/from_prod_anonymized/ccx_data_pipeline_1_anonymized.log")
-
-    print(len(groups))
+    print(groups[1])
+"""
